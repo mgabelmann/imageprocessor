@@ -17,12 +17,12 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * handy class that handles the display of images.
+ * Handy class that handles the display of images.
  */
 public final class ImagePreview extends JPanel implements ProcessImageListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(ImagePreview.class);
 
-    /** static instance of our image processor */
+    /** Static instance of our image processor. */
     private ImageProcessor ip;
     
 
@@ -31,7 +31,7 @@ public final class ImagePreview extends JPanel implements ProcessImageListener {
         this(null);
     }
 
-    /** Creates new form GalleryImagePreview */
+    /** Creates new form GalleryImagePreview. */
     public ImagePreview(ImageProcessor ip) {
         initComponents();
         
@@ -151,7 +151,7 @@ public final class ImagePreview extends JPanel implements ProcessImageListener {
     }//GEN-END:initComponents
 
     /**
-     * set the filesize and name to the display.
+     * Set the filesize and name to the display.
      * @param file
      */
     public synchronized void setImageNameAndSize(File file) {
@@ -168,7 +168,7 @@ public final class ImagePreview extends JPanel implements ProcessImageListener {
     }
 
     /**
-     * send a request to the imageprocessor to get the requested file.
+     * Send a request to the imageprocessor to get the requested file.
      * @param file
      */
     public synchronized void setImage(File file) {
@@ -188,11 +188,7 @@ public final class ImagePreview extends JPanel implements ProcessImageListener {
         }                    
     }
 
-    /**
-     * receive events from the imageprocessor. adds the image to the display and
-     * set the height & width.
-     * @param ime
-     */
+    @Override
     public synchronized void eventPerformed(ImageMessageEvent ime) {
         if (ime.getStatus() == ImageMessageEventType.ERROR || ime.getImage() == null) { return; }
         imageIcon.setIcon(new ImageIcon(ime.getImage()));

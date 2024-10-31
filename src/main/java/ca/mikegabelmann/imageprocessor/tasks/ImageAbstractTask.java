@@ -11,9 +11,7 @@ import ca.mikegabelmann.imageprocessor.events.ImageProcessorException;
  * implemented.</P>
  *
  * <P>Any class that implements this class should throw an ImageTaskException from
- * the constructor. This is a way to verify that the Task being created is valid.
- *
- * @see ImageTaskException
+ * the constructor. This is a way to verify that the Task being created is valid.</P>
  */
 public abstract class ImageAbstractTask implements ImageManipulationTypes {
     /** type of task to perform */
@@ -45,7 +43,7 @@ public abstract class ImageAbstractTask implements ImageManipulationTypes {
      * @throws ImageTaskException task is not formatted correctly
      * @throws ImageProcessorException error processing the task
      */
-    public abstract void processTask(ImageProcessEvent ipe) throws ImageTaskException, ImageProcessorException;
+    public abstract void processTask(final ImageProcessEvent ipe) throws ImageTaskException, ImageProcessorException;
 
     @Override
     public String toString() {

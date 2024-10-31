@@ -2,7 +2,6 @@ package ca.mikegabelmann.imageprocessor.tasks;
 
 /**
  * Types of image processing tasks available. More will be added as they become necessary.
- * 
  */
 public interface ImageManipulationTypes {
     //TASK IDENTIFIERS FOR ALTERING AN IMAGE

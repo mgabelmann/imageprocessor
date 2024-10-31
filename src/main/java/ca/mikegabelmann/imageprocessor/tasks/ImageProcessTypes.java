@@ -3,7 +3,6 @@ package ca.mikegabelmann.imageprocessor.tasks;
 
 /**
  * File I/O task types.
- *
  */
 public interface ImageProcessTypes  {
     /** do nothing to file */
@@ -26,4 +25,5 @@ public interface ImageProcessTypes  {
     
     /** copy the image to the desired location */
     int PROCESS_COPY_IMAGE      = 32;
+
 }

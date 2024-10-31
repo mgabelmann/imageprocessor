@@ -14,17 +14,17 @@ import ca.mikegabelmann.imageprocessor.listeners.ProcessImageListener;
  *
  * <P>If any task cannot be completed a ImageMessageEvent will be returned
  * back to the sender if it is registered as a listener. Further tasks for the
- * message are ignored (fast fail)</P>
+ * message are ignored (fast fail).</P>
  */
 public final class ImageProcessEvent extends ImageAbstractMessage {
     /** the priority to process this message as, PROCESS_EXIT is a special case */
     private ImageProcessEventType priority;
     
     /** list of tasks to perform (FIFO) */
-    private ArrayList<ImageAbstractTask> tasks;
+    private final ArrayList<ImageAbstractTask> tasks;
 
     /**
-     * Creates a new instance of ImageProcessEvent
+     * Creates a new instance of ImageProcessEvent.
      * @param priority priority to process this message at 
      * @param source send response to this object
      * @param image the image to work with if not null
@@ -53,7 +53,7 @@ public final class ImageProcessEvent extends ImageAbstractMessage {
     }
 
     /**
-     * set the priority for this event.
+     * Set the priority for this event.
      * @param priority
      */
     public void setPriority(final ImageProcessEventType priority) {
@@ -71,7 +71,7 @@ public final class ImageProcessEvent extends ImageAbstractMessage {
     }
 
     /**
-     * creates a new list of tasks (removes the old one) and copies the given
+     * Creates a new list of tasks (removes the old one) and copies the given
      * tasks to it. If an item in the list is not a task it will be quietly dropped.
      * @param t list of tasks
      */
@@ -101,7 +101,7 @@ public final class ImageProcessEvent extends ImageAbstractMessage {
     }
 
     /**
-     * get the size of the processlist.
+     * Get the size of the processlist.
      * @return number of tasks to process
      */
     public int getTasklistSize() { 

@@ -29,7 +29,7 @@ public abstract class ImageAbstractMessage extends EventObject {
      * @param image image to work with, may be null 
      * @param data user definable object, will be returned, may be null
      */
-    protected ImageAbstractMessage(Object source, BufferedImage image, Object data) {
+    protected ImageAbstractMessage(final Object source, final BufferedImage image, final Object data) {
         super(source);
         this.image = image;
         this.data = data;

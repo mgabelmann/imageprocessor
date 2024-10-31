@@ -26,18 +26,18 @@ public final class Queue {
     private static final Logger LOGGER = LoggerFactory.getLogger(Queue.class);
 
     //CONSTANTS
-    /** initial space available in the queue */
+    /** Initial space available in the queue. */
     private final static int INITIAL_CAPACITY   = 100;
     
     //VARIABLES
-    /** number of items processed so far */
+    /** Number of items processed so far. */
     private long counter = 0;          //number of items received
     
-    /** list of items to process */
+    /** List of items to process. */
     private ArrayList<ImageProcessEvent> queue = null;    //items to process
 
 
-    /** Creates a new instance of Queue */
+    /** Creates a new instance of Queue. */
     public Queue() {
         queue = new ArrayList<>(INITIAL_CAPACITY);
     }

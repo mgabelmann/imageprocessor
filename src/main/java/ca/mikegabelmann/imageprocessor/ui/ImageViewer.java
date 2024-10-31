@@ -2,6 +2,7 @@ package ca.mikegabelmann.imageprocessor.ui;
 
 import ca.mikegabelmann.imageprocessor.ImageProcessor;
 
+import java.awt.event.ActionEvent;
 import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.JDialog;
@@ -12,13 +13,12 @@ import javax.swing.JScrollPane;
 
 /**
  * A small viewer application that simply loads images for viewing.
- *
  */
 public final class ImageViewer extends javax.swing.JFrame {
-    /** image processor does all our work for us */
+    /** Image processor does all our work for us. */
     private ImageProcessor ip;
     
-    /** a filechooser that always remembers the last place it was */
+    /** A filechooser that always remembers the last place it was. */
     private JFileChooser chooser;
     
     private ImagePreview previewer;
@@ -28,7 +28,7 @@ public final class ImageViewer extends javax.swing.JFrame {
     private JScrollPane scrollArea;
     
 
-    /** Creates new form ImageViewer */
+    /** Creates new form ImageViewer. */
     public ImageViewer() {
         initComponents();
         
@@ -87,7 +87,7 @@ public final class ImageViewer extends javax.swing.JFrame {
         fileMenu.setText("File");
         loadMenuItem.setText("Load");
         loadMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 loadMenuItemActionPerformed(evt);
             }
         });
@@ -96,7 +96,7 @@ public final class ImageViewer extends javax.swing.JFrame {
 
         exitMenuItem.setText("Exit");
         exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 exitMenuItemActionPerformed(evt);
             }
         });
@@ -111,7 +111,7 @@ public final class ImageViewer extends javax.swing.JFrame {
         aboutMenu.setText("About");
         aboutMenuItem.setText("About");
         aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 aboutMenuItemActionPerformed(evt);
             }
         });
@@ -124,7 +124,7 @@ public final class ImageViewer extends javax.swing.JFrame {
 
     }//GEN-END:initComponents
 
-    private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
+    private void aboutMenuItemActionPerformed(ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
         // Add your handling code here:
         JDialog dialog = new JDialog(this, "About: Image Viewer", true);
         dialog.setContentPane(aboutPanel);
@@ -132,12 +132,12 @@ public final class ImageViewer extends javax.swing.JFrame {
         dialog.show();
     }//GEN-LAST:event_aboutMenuItemActionPerformed
 
-    private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
+    private void exitMenuItemActionPerformed(ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
         // Add your handling code here:
         this.exitForm(null);
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
-    private void loadMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadMenuItemActionPerformed
+    private void loadMenuItemActionPerformed(ActionEvent evt) {//GEN-FIRST:event_loadMenuItemActionPerformed
         // Add your handling code here:
         int mode = chooser.showOpenDialog(this);
         
@@ -156,7 +156,7 @@ public final class ImageViewer extends javax.swing.JFrame {
     
 
     /**
-     * displays the Image Viewer
+     * Displays the Image Viewer.
      * @param args the command line arguments
      */
     public static void main(String args[]) {

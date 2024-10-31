@@ -14,7 +14,7 @@ import ca.mikegabelmann.imageprocessor.events.ImageProcessorException;
  * own as well.
  */
 public final class ImageKernelTask extends ImageAbstractTask {
-    /** average kernel */
+    /** Average kernel. */
     public static final Kernel AVERAGE_3x3_9 = new Kernel(
             3,
             3,
@@ -24,7 +24,7 @@ public final class ImageKernelTask extends ImageAbstractTask {
                     1/9, 1/9, 1/9}
     );
     
-    /** basic low pass kernel (blurring) */                                                
+    /** Basic low pass kernel (blurring). */
     public static final Kernel GAUSSIAN_3x3_16 = new Kernel(
             3,
             3,
@@ -34,7 +34,7 @@ public final class ImageKernelTask extends ImageAbstractTask {
                     1/16, 2/16, 1/16}
     );
                                                                         
-    /** basic high pass kernel (sharpen) */                                                
+    /** Basic high pass kernel (sharpen). */
     public static final Kernel SHARPEN_3x3_10 = new Kernel(
             3,
             3,
@@ -44,11 +44,11 @@ public final class ImageKernelTask extends ImageAbstractTask {
                     0, -1, 0}
     );
 
-    /** kernel to use on image */
+    /** Kernel to use on image. */
     private Kernel kernel;       
 
     /**
-     * Creates a new instance of ImageKernelTask
+     * Creates a new instance of ImageKernelTask.
      * @param kernel the kernel to use on the image
      * @throws ImageTaskException task is incorrectly formatted
      */
@@ -98,7 +98,7 @@ public final class ImageKernelTask extends ImageAbstractTask {
     }
 
     /**
-     * transform the given image with the provided kernel.
+     * Transform the given image with the provided kernel.
      * @param image image to transform
      * @param kernel kernel to transform image with
      * @return transformed image

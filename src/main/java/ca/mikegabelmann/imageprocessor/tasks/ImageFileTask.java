@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 /**
  * <P>A file processing task. Used for any file related task regarding image tasks.
  * (save, copy, delete, rename, etc.)</P>
- *
  */
 public final class ImageFileTask extends ImageAbstractTask implements ImageProcessTypes {
     private static final Logger LOGGER = LoggerFactory.getLogger(ImageFileTask.class);
@@ -41,9 +40,7 @@ public final class ImageFileTask extends ImageAbstractTask implements ImageProce
     /** file to output. <B>For some operations this may not be required</B> */
     private final File outputfile;
     
-    
-    //------------------------------------------------------------------------->
-    //------------------------------------------------------------------------->
+
     /** <P>Creates a new instance of ImageFileTask</P>
      * <P><B>NOTE:</B> that for some tasks the inputfile OR output file may
      * not be necessary.</P>
@@ -68,40 +65,33 @@ public final class ImageFileTask extends ImageAbstractTask implements ImageProce
             throw new ImageTaskException("both input and output files cannot be null");
         }
     }
-    
-    
-    //------------------------------------------------------------------------->
-    /** get the input file (may be null in some cases)
-     *
+
+    /**
+     * Get the input file (may be null in some cases).
      * @return inputfile or null
      */
     public File getInputfile() { 
         return inputfile; 
     }
-    
 
-    //------------------------------------------------------------------------->
-    /** get the output file (may be null in some cases)
-     *
+    /**
+     * Get the output file (may be null in some cases).
      * @return outputfile or null
      */
     public File getOutputfile() { 
         return outputfile; 
     }
-    
-    
-    //------------------------------------------------------------------------->
-    /** get the type of file task
-     *
+
+    /**
+     * Get the type of file task.
      * @return
      */
     public int getFiletype() {
         return filetype;
     }
-    
-    
-    //------------------------------------------------------------------------->
-    /** The ImageProcessor will call this method to perform the work necessary
+
+    /**
+     * The ImageProcessor will call this method to perform the work necessary
      * to complete this task. An ImageTaskException will be thrown if there is a
      * problem with the format of a task. An ImageProcessorException will be thrown
      * if there is a problem with the actual processing of the task.
@@ -151,11 +141,17 @@ public final class ImageFileTask extends ImageAbstractTask implements ImageProce
 
         LOGGER.info(message);
     }
-    
-    
-    //------------------------------------------------------------------------->
-    /** gets the requested image file
-     *
+
+    /**
+     * Returns a (copy) list of the available image formats available to read/write.
+     * @return list of image formats available for reading and writing
+     */
+    public String[] getAvailableFormats() {
+        return (String[]) formats.clone();
+    }
+
+    /**
+     * Gets the requested image file.
      * @param file file to load that contains the image requested
      * @return image once loaded we return the image
      * @throws ImageTaskException
@@ -175,10 +171,9 @@ public final class ImageFileTask extends ImageAbstractTask implements ImageProce
             throw new ImageProcessorException(ioe.getMessage());           
         }
     }
-    
-    
-    //------------------------------------------------------------------------->
-    /** write the given image to disk. Makes sure that the extension type requested
+
+    /**
+     * Write the given image to disk. Makes sure that the extension type requested
      * is available and supported.
      *
      * @param file name of file to write
@@ -227,11 +222,9 @@ public final class ImageFileTask extends ImageAbstractTask implements ImageProce
              throw new ImageProcessorException(ioe.getMessage());
         }
     }
-    
-   
-    //------------------------------------------------------------------------->
-    /** rename the given file
-     *
+
+    /**
+     * Rename the given file.
      * @param input original file
      * @param output new file name
      * @throws ImageTaskException
@@ -250,23 +243,20 @@ public final class ImageFileTask extends ImageAbstractTask implements ImageProce
             throw new ImageProcessorException("could not rename file " +input.getName()+ " to " +output.getName());
         }
     }
-    
-    
-    //------------------------------------------------------------------------->
-    /** shortcuts to renameImage() 
-     *
+
+    /**
+     * Shortcuts to renameImage().
      * @see ImageFileTask#renameImage
      */
     private void moveImage(File input, File output) throws ImageTaskException, ImageProcessorException { 
         this.renameImage(input, output);
     }
-    
-    
-    //------------------------------------------------------------------------->
-    /** copy the given inputfile to the given outputfile. does a binary copy as 
+
+    /**
+     * Copy the given inputfile to the given outputfile. does a binary copy as
      * the data is raw data. Could be used to copy other files. Note that there are
      * problems with doing a binary copy when changing platforms (mainly due to
-     * linefeeds)
+     * linefeeds).
      *
      * @param input file to load
      * @param output file to save
@@ -315,11 +305,9 @@ public final class ImageFileTask extends ImageAbstractTask implements ImageProce
             }
         }
     }
-    
-    
-    //------------------------------------------------------------------------->
-    /** delete the given file 
-     *
+
+    /**
+     * Delete the given file.
      * @param file file to delete
      * @throws ImageTaskException
      * @throws ImageProcessorException
@@ -344,16 +332,6 @@ public final class ImageFileTask extends ImageAbstractTask implements ImageProce
         if (! file.delete()) {
             throw new ImageProcessorException("could not delete file " +file.getName());
         }
-    }
-    
-    
-    //------------------------------------------------------------------------->
-    /** returns a (copy) list of the available image formats available to read/write 
-     *
-     * @return list of image formats available for reading and writing
-     */
-    public String[] getAvailableFormats() {
-        return (String[]) formats.clone();
     }
     
 }

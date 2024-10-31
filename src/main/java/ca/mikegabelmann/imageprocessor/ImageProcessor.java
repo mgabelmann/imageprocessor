@@ -27,33 +27,33 @@ public final class ImageProcessor implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(ImageProcessor.class);
 
     //CONSTANTS
-    /** default thread priority */
+    /** Default thread priority. */
     public static final int DEFAULT_PRIORITY = Thread.MIN_PRIORITY;
     
     
     //VARIABLES
-    /** the number of image processors currently running */
+    /** The number of image processors currently running. */
     private volatile static int qty = 0;
     
-    /** id counter */
+    /** Id counter. */
     private volatile static int idcount = 0;
     
-    /** synchronization lock for altering the qty, idcount */
+    /** Synchronization lock for altering the qty, id, count. */
     private static final Object lock = new Object();
     
-    /** is this class processing images */
+    /** Is this class processing images. */
     private boolean running = false;
 
-    /** our runnable thread. We may change the Priority. */
+    /** Our runnable thread. We may change the Priority. */
     private Thread t = null;
     
-    /** queue of stuff to process. */
+    /** Queue of stuff to process. */
     private Queue queue = null;
     
     /** List of listeners that are waiting for events from us. */
     private List<ProcessImageListener> listeners;
     
-    /** our id number (see idcount above) */
+    /** Our id number (see idcount above). */
     private int id;
     
 
@@ -132,7 +132,7 @@ public final class ImageProcessor implements Runnable {
 
     /**
      * Reset the priority of this thread. If the priority is invalid, it defaults
-     * to Thread.MIN_PRIORITY
+     * to Thread.MIN_PRIORITY.
      * @param priority to set to
      */
     public synchronized void setPriority(int priority) {
@@ -166,7 +166,6 @@ public final class ImageProcessor implements Runnable {
     public Queue getQueue() {
         return queue;
     }
-    
 
     /**
      * Set an event listener. Anyone who registers with us will be informed of

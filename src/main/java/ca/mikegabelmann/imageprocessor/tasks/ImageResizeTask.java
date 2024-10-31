@@ -19,11 +19,11 @@ import org.slf4j.LoggerFactory;
 public final class ImageResizeTask extends ImageAbstractTask {
     private static final Logger LOGGER = LoggerFactory.getLogger(ImageResizeTask.class);
 
-    /** the new dimensions for this image */
+    /** The new dimensions for this image. */
     private final Dimension d;
 
     /**
-     * Creates a new instance of Class
+     * Creates a new instance of Class.
      * @param d size to make image
      * @throws ImageTaskException task is incorrectly formatted
      */
@@ -43,19 +43,19 @@ public final class ImageResizeTask extends ImageAbstractTask {
     }
 
     /**
-     * get the desired dimension/size image.
+     * Get the desired dimension/size image.
      * @return get the new size of the image
      */
     public Dimension getNewDimension() { return d; }
 
     /**
-     * get the new width of this image.
+     * Get the new width of this image.
      * @return finished width
      */
     public int getNewWidth() { return d.width; }
 
     /**
-     * get the new height of this image.
+     * Get the new height of this image.
      * @return finished height
      */
     public int getNewHeight() { return d.height; }
@@ -81,7 +81,7 @@ public final class ImageResizeTask extends ImageAbstractTask {
     }
 
     /**
-     * takes an image and scales it to fit either the width or the height. It uses the
+     * Takes an image and scales it to fit either the width or the height. It uses the
      * longest side to determine the scaling ratio to fit the image to the desired area.
      * @param image the original image
      * @param scaledwidth new width of image

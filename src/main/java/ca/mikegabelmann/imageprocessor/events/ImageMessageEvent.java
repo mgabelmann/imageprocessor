@@ -22,27 +22,9 @@ public final class ImageMessageEvent extends ImageAbstractMessage {
     private String message;
 
 
-//    /**
-//     * Use this constructor for a successful event.
-//     * @param data
-//     * @param image the processed image, if any
-//     */
-//    public ImageMessageEvent(Object data, BufferedImage image) {
-//        this(PROCESS_OK, data, null, image);
-//    }
-//
-//    /**
-//     * Use this constructor for a failed event.
-//     * @param data
-//     * @param errormessage error message
-//     */
-//    public ImageMessageEvent(Object data, String errormessage) {
-//        this(PROCESS_ERROR, data, errormessage, null);
-//    }
-
     /**
      * All arguments constructor. The source is not set to the ImageProcessor that
-     * sent the message. We dont want the client to have access to it directly
+     * sent the message. We don't want the client to have access to it directly
      * @param status status code for this message
      * @param data
      * @param message if there was a message
@@ -91,6 +73,7 @@ public final class ImageMessageEvent extends ImageAbstractMessage {
     public void setMessage(final String message) {
         this.message = message;
     }
+
 
     public static ImageMessageEvent createErrorEvent(final Object data, final String message)  {
         return new ImageMessageEvent(ImageMessageEventType.ERROR, data, message, null);

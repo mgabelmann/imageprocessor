@@ -2,7 +2,6 @@ package ca.mikegabelmann.imageprocessor.events;
 
 /**
  * Priority of ImageProcessEvent.
- *
  * @see ImageProcessEvent
  */
 public enum ImageProcessEventType {
