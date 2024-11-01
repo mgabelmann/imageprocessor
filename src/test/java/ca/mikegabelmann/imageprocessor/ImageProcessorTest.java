@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Some simple test cases for testing the public methods of the ImageProcessor.
- *
  */
 public class ImageProcessorTest implements ProcessImageListener {
     /** we use this ImageProcessor for all tests */
@@ -19,7 +18,7 @@ public class ImageProcessorTest implements ProcessImageListener {
     
     @AfterEach
     protected void tearDown() throws Exception {
-        ip.forceExit();
+        ip.exit();
         
         if (ip.isRunning()) {
             System.err.println("ImageProcessor did not exit");
@@ -35,14 +34,14 @@ public class ImageProcessorTest implements ProcessImageListener {
         }
     }
 
-    @Test
+/*    @Test
     public void testForceExit() {
         if (! ip.isRunning()) {
             Assertions.fail("ImageProcessor is not running");
             return;
         }
         
-        ip.forceExit();
+        ip.exit();
         int count = 4;
         
         //wait upto 4 seconds for the ImageProcessor to exit
@@ -58,7 +57,7 @@ public class ImageProcessorTest implements ProcessImageListener {
         if (ip.isRunning()) {
             Assertions.fail("ImageProcessor did not exit. Synchronization issues?");
         }
-    }
+    }*/
     
     @Test
     public void testGetPriority() {

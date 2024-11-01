@@ -31,15 +31,15 @@ public final class Queue {
     
     //VARIABLES
     /** Number of items processed so far. */
-    private long counter = 0;          //number of items received
+    private long counter = 0;
     
     /** List of items to process. */
-    private ArrayList<ImageProcessEvent> queue = null;    //items to process
+    private final ArrayList<ImageProcessEvent> queue;
 
 
     /** Creates a new instance of Queue. */
     public Queue() {
-        queue = new ArrayList<>(INITIAL_CAPACITY);
+        this.queue = new ArrayList<>(INITIAL_CAPACITY);
     }
 
     /**
@@ -56,7 +56,7 @@ public final class Queue {
             
             //place in middle of queue elements if any
             case PRIORITY_MEDIUM:
-                int pos = (int) queue.size() / 2;
+                int pos = queue.size() / 2;
                 queue.add(pos, ipe);              
                 break;
                 
@@ -119,7 +119,7 @@ public final class Queue {
      *
      * @param pil listener to search for
      */
-    public synchronized void flush(ProcessImageListener pil) {
+    public synchronized void flush(final ProcessImageListener pil) {
         if (pil == null) { return; }
                
         //make an array of all the items

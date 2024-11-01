@@ -29,61 +29,64 @@ public final class ImageProcessor implements Runnable {
     //CONSTANTS
     /** Default thread priority. */
     public static final int DEFAULT_PRIORITY = Thread.MIN_PRIORITY;
-    
+
+    /** Synchronization lock for altering the qty, id, currentId. */
+    private static final Object lock = new Object();
     
     //VARIABLES
     /** The number of image processors currently running. */
     private volatile static int qty = 0;
     
     /** Id counter. */
-    private volatile static int idcount = 0;
-    
-    /** Synchronization lock for altering the qty, id, count. */
-    private static final Object lock = new Object();
+    private volatile static int currentId = 0;
     
     /** Is this class processing images. */
-    private boolean running = false;
+    private volatile boolean running = false;
+
+    /** Our id number (see idcount above). */
+    private final int id;
 
     /** Our runnable thread. We may change the Priority. */
-    private Thread t = null;
+    private final Thread t;
     
     /** Queue of stuff to process. */
-    private Queue queue = null;
+    private final Queue queue;
     
     /** List of listeners that are waiting for events from us. */
-    private List<ProcessImageListener> listeners;
-    
-    /** Our id number (see idcount above). */
-    private int id;
-    
+    private final List<ProcessImageListener> listeners;
 
-    /**
-     * No arguments constructor.
-     * @see Queue
-     */
-    public ImageProcessor() {
-        this(new Queue());
-    }
 
     /**
      * Creates a new instance of this object.
-     * @see Queue
      */
-    public ImageProcessor(final Queue queue) {
-       this.queue = queue;
-       this.listeners = new ArrayList<>(10);
+    public ImageProcessor() {
+        this.queue = new Queue();
+        this.listeners = new ArrayList<>(10);
 
-       synchronized (lock) {
-           this.id = ++idcount;
-           ++qty;
+        this.t = new Thread(this);
+        this.t.setPriority(DEFAULT_PRIORITY);
+
+        synchronized (lock) {
+           this.id = ++currentId;
        }
-       
-       //handle the thread initialization and startup
-       t = new Thread(this);
-       t.setPriority(DEFAULT_PRIORITY);
-       t.start();
     }
-  
+
+    /**
+     * Force this object to exit. Not the best way to exit as other objects
+     * may be using this object for processing tasks.
+     */
+    public synchronized void exit() {
+        this.running = false;
+        t.interrupt();
+    }
+
+    /**
+     * You must call this method to start processing of tasks.
+     */
+    public void start() {
+        //handle the thread initialization and startup
+        t.start();
+    }
 
     /**
      * Starts this class running. Waits for work to be added to the Queue class,
@@ -92,14 +95,21 @@ public final class ImageProcessor implements Runnable {
     @Override
     public void run() {
         this.running = true;
-        
-        ImageProcessEvent ipe;
-        while (running) { 
-            ipe = queue.getWork();
+
+        synchronized (lock) {
+            ++qty;
+        }
+
+        LOGGER.info("{} : starting", this);
+
+        while (running) {
+            ImageProcessEvent ipe = queue.getWork();
             
             //NOTE: BLOCKS HERE UNTIL wait() ELAPSES OR QUEUE NOTIFIES US OF WORK TO DO     
             
-            if (ipe == null) continue;
+            if (ipe == null) {
+                continue;
+            }
             
             this.processEvent(ipe);
         }
@@ -122,20 +132,11 @@ public final class ImageProcessor implements Runnable {
     }
 
     /**
-     * Force this object to exit. Not the best way to exit as other objects
-     * may be using this object for processing tasks.
-     */
-    public synchronized void forceExit() {
-        running = false;
-        t.interrupt();
-    }
-
-    /**
      * Reset the priority of this thread. If the priority is invalid, it defaults
      * to Thread.MIN_PRIORITY.
      * @param priority to set to
      */
-    public synchronized void setPriority(int priority) {
+    public synchronized void setPriority(final int priority) {
         switch (priority) {
             case Thread.MAX_PRIORITY:
             case Thread.MIN_PRIORITY:
@@ -172,7 +173,7 @@ public final class ImageProcessor implements Runnable {
      * any event that we process.
      * @param pil who to send events to
      */
-    public synchronized boolean addEventListener(ProcessImageListener pil) {
+    public synchronized boolean addEventListener(final ProcessImageListener pil) {
         if (pil == null) {
             return false;
 
@@ -192,7 +193,7 @@ public final class ImageProcessor implements Runnable {
      * Remove an event listener. deregister the given listener from the list of listeners.
      * @param pil object that does not want to receive ProcessMessageEvents
      */
-    public synchronized boolean removeEventListener(ProcessImageListener pil) {
+    public synchronized boolean removeEventListener(final ProcessImageListener pil) {
         if (pil == null) {
             return false;
 
@@ -210,7 +211,7 @@ public final class ImageProcessor implements Runnable {
      * @param pil listener to test
      * @return true if a registered listener, false otherwise
      */
-    public synchronized boolean isEventListener(ProcessImageListener pil) {
+    public synchronized boolean isEventListener(final ProcessImageListener pil) {
         return listeners.contains(pil);
     }
 
@@ -270,7 +271,7 @@ public final class ImageProcessor implements Runnable {
      * @throws ImageTaskException if the task is somehow invalid (depends on type), and 
      * @throws ImageProcessorException if there problem performing the task.
      */
-    private void processTask(ImageProcessEvent ipe, ImageAbstractTask task) throws ImageTaskException, ImageProcessorException {
+    private void processTask(final ImageProcessEvent ipe, final ImageAbstractTask task) throws ImageTaskException, ImageProcessorException {
         //ignore empty tasks
         if (task == null) return;
         
@@ -306,10 +307,9 @@ public final class ImageProcessor implements Runnable {
         }
         
         //loop over all the registered listeners, and send event to them
-        for (Object listener : listeners) {
-            ProcessImageListener pil = (ProcessImageListener) listener;
-            if (pil == null) continue;
-            pil.eventPerformed(ime);
+        for (ProcessImageListener listener : listeners) {
+            if (listener == null) continue;
+            listener.eventPerformed(ime);
             sent = true;
         }
         
@@ -321,7 +321,7 @@ public final class ImageProcessor implements Runnable {
     
     @Override
     public String toString() {
-          return "ImageProcessor" +id;
+          return "ImageProcessor" + id;
     }
     
 }
