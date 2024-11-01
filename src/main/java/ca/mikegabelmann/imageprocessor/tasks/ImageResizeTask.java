@@ -28,7 +28,7 @@ public final class ImageResizeTask extends ImageAbstractTask {
      * @throws ImageTaskException task is incorrectly formatted
      */
     public ImageResizeTask(final Dimension d) throws ImageTaskException {
-        super(PROCESS_IMAGE_RESIZE);        
+        super("PROCESS_IMAGE_RESIZE");
         this.d = d;
         
         //the new size must be set

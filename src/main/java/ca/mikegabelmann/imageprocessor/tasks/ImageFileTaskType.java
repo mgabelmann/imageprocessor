@@ -4,26 +4,26 @@ package ca.mikegabelmann.imageprocessor.tasks;
 /**
  * File I/O task types.
  */
-public interface ImageProcessTypes  {
+public enum ImageFileTaskType {
     /** do nothing to file */
-    int PROCESS_DO_NOTHING      = 0;
+    PROCESS_DO_NOTHING,
     
     /** get requested image file */
-    int PROCESS_GET_IMAGE       = 1;
+    PROCESS_GET_IMAGE,
     
     /** save given image */
-    int PROCESS_WRITE_IMAGE     = 2;
+    PROCESS_WRITE_IMAGE,
     
     /** delete the image file */
-    int PROCESS_DELETE_IMAGE    = 4;
+    PROCESS_DELETE_IMAGE,
     
     /** rename the image file */
-    int PROCESS_RENAME_IMAGE    = 8;
+    PROCESS_RENAME_IMAGE,
     
     /** move the image to the desired location (generally the same as PROCESS_RENAME_IMAGE) */
-    int PROCESS_MOVE_IMAGE      = 16;
+    PROCESS_MOVE_IMAGE,
     
     /** copy the image to the desired location */
-    int PROCESS_COPY_IMAGE      = 32;
+    PROCESS_COPY_IMAGE,
 
 }

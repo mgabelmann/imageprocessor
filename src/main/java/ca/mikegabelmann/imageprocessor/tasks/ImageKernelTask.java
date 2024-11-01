@@ -53,7 +53,7 @@ public final class ImageKernelTask extends ImageAbstractTask {
      * @throws ImageTaskException task is incorrectly formatted
      */
     public ImageKernelTask(final Kernel kernel) throws ImageTaskException {
-        super(PROCESS_IMAGE_SPATIALFILTER);
+        super("PROCESS_IMAGE_SPATIALFILTER");
         this.setKernel(kernel);
     }
 

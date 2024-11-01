@@ -12,6 +12,7 @@ import ca.mikegabelmann.imageprocessor.events.ImageProcessEventType;
 import ca.mikegabelmann.imageprocessor.events.ImageTaskException;
 import ca.mikegabelmann.imageprocessor.tasks.ImageFileTask;
 import ca.mikegabelmann.imageprocessor.listeners.ProcessImageListener;
+import ca.mikegabelmann.imageprocessor.tasks.ImageFileTaskType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -180,7 +181,7 @@ public final class ImagePreview extends JPanel implements ProcessImageListener {
         ImageProcessEvent ipe = new ImageProcessEvent(ImageProcessEventType.PRIORITY_MEDIUM, this, null, null);
         
         try {
-            ipe.addNextProcessingTask(new ImageFileTask(ImageFileTask.PROCESS_GET_IMAGE, file, null));
+            ipe.addNextProcessingTask(new ImageFileTask(ImageFileTaskType.PROCESS_GET_IMAGE, file, null));
             ip.getQueue().putItem(ipe);
             
         } catch(ImageTaskException ite) {

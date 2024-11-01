@@ -35,7 +35,7 @@ public class ImageNullTask extends ImageAbstractTask {
 
     /** Creates a new instance of ImageNullTask */
     public ImageNullTask(final long sleeptime) throws ImageTaskException {
-        super(PROCESS_IMAGE_DO_NOTHING);
+        super("PROCESS_IMAGE_DO_NOTHING");
         
         //do some range checking
         if (sleeptime > MAX_WAIT) {

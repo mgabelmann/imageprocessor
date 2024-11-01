@@ -2,7 +2,6 @@ package ca.mikegabelmann.imageprocessor.tasks;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.FileNotFoundException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.awt.image.BufferedImage;
@@ -19,7 +18,7 @@ import org.slf4j.LoggerFactory;
  * <P>A file processing task. Used for any file related task regarding image tasks.
  * (save, copy, delete, rename, etc.)</P>
  */
-public final class ImageFileTask extends ImageAbstractTask implements ImageProcessTypes {
+public final class ImageFileTask extends ImageAbstractTask {
     private static final Logger LOGGER = LoggerFactory.getLogger(ImageFileTask.class);
 
     //CONSTANTS
@@ -32,7 +31,7 @@ public final class ImageFileTask extends ImageAbstractTask implements ImageProce
     private static String[] formats;
     
     /** type of file task to perform */
-    private final int filetype;
+    private final ImageFileTaskType filetype;
     
     /** file to input. <B>For some operations this may not be required</B> */
     private final File inputfile;
@@ -50,8 +49,8 @@ public final class ImageFileTask extends ImageAbstractTask implements ImageProce
      * @param outputfile results file
      * @throws ImageTaskException task is incorrectly formatted
      */
-    public ImageFileTask(int filetype, File inputfile, File outputfile) throws ImageTaskException {
-        super(PROCESS_FILE);
+    public ImageFileTask(ImageFileTaskType filetype, File inputfile, File outputfile) throws ImageTaskException {
+        super("PROCESS_FILE");
         this.filetype = filetype;
         this.inputfile = inputfile;
         this.outputfile = outputfile;
@@ -86,7 +85,7 @@ public final class ImageFileTask extends ImageAbstractTask implements ImageProce
      * Get the type of file task.
      * @return
      */
-    public int getFiletype() {
+    public ImageFileTaskType getFiletype() {
         return filetype;
     }
 
@@ -101,43 +100,32 @@ public final class ImageFileTask extends ImageAbstractTask implements ImageProce
      * @throws ImageProcessorException error processing the task
      */
     public void processTask(ImageProcessEvent ipe) throws ImageTaskException, ImageProcessorException {
-        String message = "";
-        
-        switch (filetype) {
-            case PROCESS_GET_IMAGE:
+        String message = switch (filetype) {
+            case PROCESS_GET_IMAGE -> {
                 ipe.setImage(this.readImage(inputfile));
-                message = "retrieved image " +inputfile.getName();
-                break;
-
-            case PROCESS_WRITE_IMAGE:
+                yield "retrieved image " + inputfile.getName();
+            }
+            case PROCESS_WRITE_IMAGE -> {
                 this.writeImage(outputfile, ipe.getImage());
-                message = "saved image " +outputfile.getName();
-                break;
-
-            case PROCESS_COPY_IMAGE:
+                yield "saved image " + outputfile.getName();
+            }
+            case PROCESS_COPY_IMAGE -> {
                 this.copyImage(inputfile, outputfile);
-                message = "TODO: implement this";
-                break;
-
-            case PROCESS_DELETE_IMAGE:
+                yield "TODO: implement this";
+            }
+            case PROCESS_DELETE_IMAGE -> {
                 this.deleteImage(inputfile);
-                message = "deleted image " +inputfile.getName();
-                break;
-
-            case PROCESS_MOVE_IMAGE:
-            case PROCESS_RENAME_IMAGE:
+                yield "deleted image " + inputfile.getName();
+            }
+            case PROCESS_MOVE_IMAGE, PROCESS_RENAME_IMAGE -> {
                 this.moveImage(inputfile, outputfile);
-                message = "renamed image " +inputfile.getName();
-                break;
-
-            case PROCESS_DO_NOTHING:
-                message = "empty task";
-                break;
-
-            default:
+                yield "renamed image " + inputfile.getName();
+            }
+            case PROCESS_DO_NOTHING -> "empty task";
+            default ->
                 //invalid type so throw task error
-                throw new ImageTaskException("Invalid type (" +filetype+ ") for Task");
-        }
+                    throw new ImageTaskException("Invalid type (" + filetype + ") for Task");
+        };
 
         LOGGER.info(message);
     }
@@ -157,7 +145,7 @@ public final class ImageFileTask extends ImageAbstractTask implements ImageProce
      * @throws ImageTaskException
      * @throws ImageProcessorException
      */
-    private BufferedImage readImage(File file) throws ImageTaskException, ImageProcessorException {
+    private BufferedImage readImage(final File file) throws ImageTaskException, ImageProcessorException {
         //make sure we have an input file
         if (file == null) {
             throw new ImageTaskException("you must provide an input file");
@@ -181,7 +169,7 @@ public final class ImageFileTask extends ImageAbstractTask implements ImageProce
      * @throws ImageTaskException
      * @throws ImageProcessorException
      */
-    private void writeImage(File file, BufferedImage image) throws ImageTaskException, ImageProcessorException {        
+    private void writeImage(final File file, final BufferedImage image) throws ImageTaskException, ImageProcessorException {
         //make sure we have an output file
         if (file == null) {
             throw new ImageTaskException("you must provide an output file");
@@ -202,8 +190,8 @@ public final class ImageFileTask extends ImageAbstractTask implements ImageProce
         String suffix = filename.substring(filename.lastIndexOf(".") + 1, filename.length()).toUpperCase();       
         
         //locate the suffix
-        for (int i=0; i < formats.length; i++) {
-            if (formats[i].equalsIgnoreCase(suffix)) {
+        for (String format : formats) {
+            if (format.equalsIgnoreCase(suffix)) {
                 suffixsupported = true;
                 break;
             }
@@ -230,7 +218,7 @@ public final class ImageFileTask extends ImageAbstractTask implements ImageProce
      * @throws ImageTaskException
      * @throws ImageProcessorException
      */
-    private void renameImage(File input, File output) throws ImageTaskException, ImageProcessorException {
+    private void renameImage(final File input, final File output) throws ImageTaskException, ImageProcessorException {
         //make sure we have files for both
         if (input == null || output == null) {
             throw new ImageTaskException("you must provide both an input and output file");
@@ -248,7 +236,7 @@ public final class ImageFileTask extends ImageAbstractTask implements ImageProce
      * Shortcuts to renameImage().
      * @see ImageFileTask#renameImage
      */
-    private void moveImage(File input, File output) throws ImageTaskException, ImageProcessorException { 
+    private void moveImage(final File input, final File output) throws ImageTaskException, ImageProcessorException {
         this.renameImage(input, output);
     }
 
@@ -263,7 +251,7 @@ public final class ImageFileTask extends ImageAbstractTask implements ImageProce
      * @throws ImageTaskException
      * @throws ImageProcessorException
      */
-    private void copyImage(File input, File output) throws ImageTaskException, ImageProcessorException { 
+    private void copyImage(final File input, final File output) throws ImageTaskException, ImageProcessorException {
         //make sure we have files for both
         if (input == null || output == null) {
             throw new ImageTaskException("you must provide both an input and output file");
@@ -289,9 +277,6 @@ public final class ImageFileTask extends ImageAbstractTask implements ImageProce
                 count = in.read(buffer, 0, buffer.length);
             } while (count != -1);
             
-        } catch (FileNotFoundException fnfe) {
-            throw new ImageTaskException(fnfe.getMessage());
-            
         } catch (IOException ioe) {
             throw new ImageTaskException(ioe.getMessage());
             
@@ -312,7 +297,7 @@ public final class ImageFileTask extends ImageAbstractTask implements ImageProce
      * @throws ImageTaskException
      * @throws ImageProcessorException
      */
-    private void deleteImage(File file) throws ImageTaskException, ImageProcessorException {
+    private void deleteImage(final File file) throws ImageTaskException, ImageProcessorException {
         //make sure there is a file to delete
         if (file == null) {
             throw new ImageTaskException("must give a filename to delete");

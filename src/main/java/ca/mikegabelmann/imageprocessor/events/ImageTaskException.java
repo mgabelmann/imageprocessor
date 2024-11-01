@@ -6,8 +6,7 @@ import ca.mikegabelmann.imageprocessor.tasks.ImageAbstractTask;
 /**
  * Thrown if there is a problem with the structure of a task. Tasks must be
  * formatted and are validated when created. If there is a problem with the structure
- * of a task then this exception is generated. 
- *
+ * of a task then this exception is generated.
  * @see ImageAbstractTask
  */
 public final class ImageTaskException extends Exception {
