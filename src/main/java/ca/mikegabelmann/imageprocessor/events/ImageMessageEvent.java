@@ -8,11 +8,10 @@ import java.awt.image.BufferedImage;
  * object that implements the <code>ProcessImageListener</code>. Note that the
  * source for this message will always be Object. It will always come from an
  * ImageProcessor and there is no reason for the receiver to know who sent it.
- *
  */
 public final class ImageMessageEvent extends ImageAbstractMessage {
 
-    /** The status code for this message, if there was an error set this flag */
+    /** The status code for this message, if there was an error set this flag. */
     private ImageMessageEventType status;
     
     /**
@@ -23,8 +22,8 @@ public final class ImageMessageEvent extends ImageAbstractMessage {
 
 
     /**
-     * All arguments constructor. The source is not set to the ImageProcessor that
-     * sent the message. We don't want the client to have access to it directly
+     * All argument's constructor. The source is not set to the ImageProcessor that
+     * sent the message. We don't want the client to have access to it directly.
      * @param status status code for this message
      * @param data
      * @param message if there was a message

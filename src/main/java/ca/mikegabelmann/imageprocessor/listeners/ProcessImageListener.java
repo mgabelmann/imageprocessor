@@ -14,7 +14,7 @@ import ca.mikegabelmann.imageprocessor.events.ImageMessageEvent;
 public interface ProcessImageListener extends EventListener {
 
     /**
-     * receive events from the ImageProcessor.
+     * Receive events from the ImageProcessor.
      * @param ime the received event
      */
     void eventPerformed(ImageMessageEvent ime);

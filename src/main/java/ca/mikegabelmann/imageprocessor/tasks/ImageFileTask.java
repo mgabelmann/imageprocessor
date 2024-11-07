@@ -49,7 +49,11 @@ public final class ImageFileTask extends ImageAbstractTask {
      * @param outputfile results file
      * @throws ImageTaskException task is incorrectly formatted
      */
-    public ImageFileTask(ImageFileTaskType filetype, File inputfile, File outputfile) throws ImageTaskException {
+    public ImageFileTask(
+            final ImageFileTaskType filetype,
+            final File inputfile,
+            final File outputfile) throws ImageTaskException {
+
         super("PROCESS_FILE");
         this.filetype = filetype;
         this.inputfile = inputfile;
@@ -94,12 +98,11 @@ public final class ImageFileTask extends ImageAbstractTask {
      * to complete this task. An ImageTaskException will be thrown if there is a
      * problem with the format of a task. An ImageProcessorException will be thrown
      * if there is a problem with the actual processing of the task.
-     *
      * @param ipe event to process
      * @throws ImageTaskException task is incorrectly formatted
      * @throws ImageProcessorException error processing the task
      */
-    public void processTask(ImageProcessEvent ipe) throws ImageTaskException, ImageProcessorException {
+    public void processTask(final ImageProcessEvent ipe) throws ImageTaskException, ImageProcessorException {
         String message = switch (filetype) {
             case PROCESS_GET_IMAGE -> {
                 ipe.setImage(this.readImage(inputfile));

@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
  * ImageProcessor will process the event and all its tasks then send an message
  * back to the event sender (if any) and any registered listeners.
  * Multiple ImageProcessors can be working on 1 Queue.
- *
  */
 public final class ImageProcessor implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(ImageProcessor.class);

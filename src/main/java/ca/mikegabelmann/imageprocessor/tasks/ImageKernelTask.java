@@ -82,7 +82,6 @@ public final class ImageKernelTask extends ImageAbstractTask {
      * to complete this task. An ImageTaskException will be thrown if there is a
      * problem with the format of a task. An ImageProcessorException will be thrown
      * if there is a problem with the actual processing of the task.
-     *
      * @param ipe event to process
      * @throws ImageTaskException task is incorectly formatted
      * @throws ImageProcessorException error processing the task

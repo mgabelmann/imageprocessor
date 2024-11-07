@@ -9,20 +9,27 @@ package ca.mikegabelmann.imageprocessor.events;
  */
 public final class ImageProcessorException extends Exception {
     /**
-     * Creates a new instance of <code>ImageProcessorException</code>
-     * without detail message.
+     * Creates a new instance of <code>ImageProcessorException</code> without detail message.
      */
     public ImageProcessorException() {
         ;
     }
 
     /**
-     * Constructs an instance of <code>ImageProcessorException</code>
-     * with the specified detail message.
+     * Creates a new instance of <code>ImageProcessorException</code> with the specified detail message.
      * @param msg the detail message.
      */
     public ImageProcessorException(final String msg) {
         super(msg);
+    }
+
+    /**
+     * Creates a new instance of <code>ImageProcessorException</code> with the specified detail message.
+     * @param msg
+     * @param cause
+     */
+    public ImageProcessorException(final String msg, final Throwable cause) {
+        super(msg, cause);
     }
     
 }

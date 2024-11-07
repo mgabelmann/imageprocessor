@@ -24,5 +24,14 @@ public final class ImageTaskException extends Exception {
     public ImageTaskException(final String msg) {
         super(msg);
     }
-    
+
+    /**
+     * Constructs an instance of <code>ImageTaskException</code> with the specified detail message.
+     * @param msg
+     * @param cause
+     */
+    public ImageTaskException(final String msg, final Throwable cause) {
+        super(msg, cause);
+    }
+
 }

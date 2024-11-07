@@ -9,7 +9,6 @@ import java.util.EventObject;
  * instantiate this class directly. Use ImageProcessEvent to request a job from the 
  * ImageProcessor and the ImageProcessor will use ImageMessageEvent to send the results
  * back to you.
- *
  */
 public abstract class ImageAbstractMessage extends EventObject {
     /** An image (maybe null). */
