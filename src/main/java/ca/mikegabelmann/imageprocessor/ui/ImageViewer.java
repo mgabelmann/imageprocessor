@@ -34,6 +34,7 @@ public final class ImageViewer extends javax.swing.JFrame {
         
         //get an imageprocessor
         ip = new ImageProcessor();
+        ip.start();
         
         //create our filechooser
         chooser = new JFileChooser(new File(System.getProperty("user.home")) );

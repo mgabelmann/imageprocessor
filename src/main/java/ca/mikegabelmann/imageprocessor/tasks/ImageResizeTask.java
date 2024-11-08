@@ -6,8 +6,8 @@ import java.awt.image.AffineTransformOp;
 import java.awt.geom.AffineTransform;
 
 import ca.mikegabelmann.imageprocessor.events.ImageProcessEvent;
-import ca.mikegabelmann.imageprocessor.events.ImageTaskException;
-import ca.mikegabelmann.imageprocessor.events.ImageProcessorException;
+import ca.mikegabelmann.imageprocessor.exception.ImageTaskException;
+import ca.mikegabelmann.imageprocessor.exception.ImageProcessorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * This Task allows the resizing of an image. It will be scaled to fit into the dimension
  * provided.
  */
-public final class ImageResizeTask extends ImageAbstractTask {
+public final class ImageResizeTask extends AbstractImageTask {
     private static final Logger LOGGER = LoggerFactory.getLogger(ImageResizeTask.class);
 
     /** The new dimensions for this image. */

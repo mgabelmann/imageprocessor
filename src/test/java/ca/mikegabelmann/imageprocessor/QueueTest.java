@@ -6,17 +6,19 @@ import ca.mikegabelmann.imageprocessor.events.ImageMessageEvent;
 import ca.mikegabelmann.imageprocessor.events.ImageProcessEvent;
 
 import ca.mikegabelmann.imageprocessor.events.ImageProcessEventType;
-import ca.mikegabelmann.imageprocessor.listeners.ProcessImageListener;
+import ca.mikegabelmann.imageprocessor.listeners.ImageMessageEventListener;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
-public class QueueTest implements ProcessImageListener {
+public class QueueTest implements ImageMessageEventListener {
+    private static final Logger LOGGER = LoggerFactory.getLogger(QueueTest.class);
+
     //CONSTANTS
-    private static final int value = 25;
-    private static final Integer uservalue = value;
     private static final BufferedImage image = new BufferedImage(50, 50, BufferedImage.TYPE_INT_RGB);
     
     //VARIABLES
@@ -24,17 +26,26 @@ public class QueueTest implements ProcessImageListener {
     private ImageProcessEvent ipe;
 
 
+    @AfterEach
+    public void tearDown() throws Exception {
+        queue = null;
+        ipe = null;
+    }
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        queue = new Queue();
+        ipe = new ImageProcessEvent(ImageProcessEventType.PRIORITY_MEDIUM, this, image);
+        queue.eventPerformed(ipe);
+    }
+
     @Test
     public void testPutItem() {
         BufferedImage testimage = new BufferedImage(400, 500, BufferedImage.TYPE_INT_RGB);
-        ImageProcessEvent ipe2 = new ImageProcessEvent(ImageProcessEventType.PRIORITY_MEDIUM, this, testimage, uservalue);
-        queue.putItem(ipe2);
-        
-        int size = queue.numElements();
-        
-        if (size != 2) {
-            Assertions.fail("wrong number of elements: " +size+ ", should be 2");
-        }
+        ImageProcessEvent ipe2 = new ImageProcessEvent(ImageProcessEventType.PRIORITY_MEDIUM, this, testimage);
+        queue.eventPerformed(ipe2);
+
+        Assertions.assertEquals(2, queue.numElements());
     }
     
     @Test
@@ -55,17 +66,15 @@ public class QueueTest implements ProcessImageListener {
 
     @Test
     public void testFlush() {
-        TestListener tl = new TestListener();
+        ImageMessageEventListener tmpListener = event -> {};
         BufferedImage testimage = new BufferedImage(400, 500, BufferedImage.TYPE_INT_RGB);
-        ImageProcessEvent ipe2 = new ImageProcessEvent(ImageProcessEventType.PRIORITY_MEDIUM, tl, testimage, uservalue);
+        ImageProcessEvent ipe2 = new ImageProcessEvent(ImageProcessEventType.PRIORITY_MEDIUM, tmpListener, testimage);
         
-        queue.putItem(ipe2);
+        queue.eventPerformed(ipe2);
+        Assertions.assertEquals(2, queue.numElements());
+
         queue.flush(this);
-        
-        int size = queue.numElements();
-        if (size != 1) {
-            Assertions.fail("did not flush queue properly, there are " +size+ " items left");
-        }
+        Assertions.assertEquals(1, queue.numElements());
     }
     
     @Test
@@ -77,43 +86,19 @@ public class QueueTest implements ProcessImageListener {
     
     @Test
     public void testNumElements() {
-        int size = queue.numElements();
-        
-        if (size != 1) {
-            Assertions.fail("there should be 1 item, but we got " +size);
-        }
-    }
-
-    @AfterEach
-    public void tearDown() throws Exception {
-        queue = null;
-        ipe = null;
-    }
-
-    @BeforeEach
-    public void setUp() throws Exception {
-        queue = new Queue();
-        ipe = new ImageProcessEvent(ImageProcessEventType.PRIORITY_MEDIUM, this, image, uservalue);
-        queue.putItem(ipe);
+        Assertions.assertEquals(1, queue.numElements());
     }
 
     private void addEvents() {
         for (int i=0; i < 20; i++) {
             BufferedImage testimage = new BufferedImage(400, 500, BufferedImage.TYPE_INT_RGB);
-            ImageProcessEvent ipe2 = new ImageProcessEvent(ImageProcessEventType.PRIORITY_MEDIUM, this, testimage, uservalue);
-            queue.putItem(ipe2);
+            ImageProcessEvent ipe2 = new ImageProcessEvent(ImageProcessEventType.PRIORITY_MEDIUM, this, testimage);
+            queue.eventPerformed(ipe2);
         }
     }
 
     public void eventPerformed(ImageMessageEvent ime) {
-        System.out.println(this + " received ImageProcessor event");
-    }
-
-    class TestListener implements ProcessImageListener {
-        
-        public void eventPerformed(ImageMessageEvent ime) {
-            System.out.println(this + " received ImageProcessor event");
-        }
+        LOGGER.debug("received event {}", ime);
     }
 
 }

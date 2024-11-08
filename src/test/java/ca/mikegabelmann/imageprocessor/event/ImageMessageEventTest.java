@@ -3,20 +3,23 @@ package ca.mikegabelmann.imageprocessor.event;
 import java.awt.image.BufferedImage;
 import ca.mikegabelmann.imageprocessor.events.ImageMessageEvent;
 import ca.mikegabelmann.imageprocessor.events.ImageMessageEventType;
+import ca.mikegabelmann.imageprocessor.listeners.ImageMessageEventListener;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  *
  */
-public class ImageMessageEventTest {
+public class ImageMessageEventTest implements ImageMessageEventListener {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ImageMessageEventTest.class);
+
     //CONSTANTS
-    private static final int value = 25;
     private static final String ERROR_MESSAGE = "test error message";
-    private static final Integer uservalue = value;
     private static final BufferedImage image = new BufferedImage(50, 50, BufferedImage.TYPE_INT_RGB);
 
     //VARIABLES
@@ -24,9 +27,8 @@ public class ImageMessageEventTest {
     private ImageMessageEvent okmessage;
     private ImageMessageEvent unknownmessage;
 
-
     @AfterEach
-    public void tearDown() throws java.lang.Exception {
+    public void tearDown() {
         errormessage = null;
         okmessage = null;
         unknownmessage = null;
@@ -34,9 +36,9 @@ public class ImageMessageEventTest {
 
     @BeforeEach
     public void setUp() throws java.lang.Exception {
-        this.errormessage = ImageMessageEvent.createErrorEvent(uservalue, ERROR_MESSAGE);
-        this.okmessage = ImageMessageEvent.createOkEvent(uservalue, image);
-        this.unknownmessage = ImageMessageEvent.createUnknownEvent(uservalue, image, null);
+        this.errormessage = ImageMessageEvent.createErrorEvent(this, ERROR_MESSAGE);
+        this.okmessage = ImageMessageEvent.createOkEvent(this, image);
+        this.unknownmessage = ImageMessageEvent.createUnknownEvent(this, image, null);
     }
     
     @Test
@@ -92,19 +94,9 @@ public class ImageMessageEventTest {
         Assertions.assertEquals(unknownmessage.getImage(), testimage);
     }
 
-    @Test
-    public void testSetData() {
-        Object testdata = new Object();
-        
-        unknownmessage.setData(testdata);
-        Assertions.assertEquals(unknownmessage.getData(), testdata);
+    @Override
+    public void eventPerformed(final ImageMessageEvent event) {
+        LOGGER.debug("received event {}", event);
     }
 
-    @Test
-    public void testGetData() {
-        Assertions.assertEquals(errormessage.getData(), uservalue);
-        Assertions.assertEquals(okmessage.getData(), uservalue);
-        Assertions.assertEquals(unknownmessage.getData(), uservalue);
-    }
-    
 }

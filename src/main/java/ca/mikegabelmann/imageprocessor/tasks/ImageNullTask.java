@@ -1,7 +1,7 @@
 package ca.mikegabelmann.imageprocessor.tasks;
 
-import ca.mikegabelmann.imageprocessor.events.ImageTaskException;
-import ca.mikegabelmann.imageprocessor.events.ImageProcessorException;
+import ca.mikegabelmann.imageprocessor.exception.ImageTaskException;
+import ca.mikegabelmann.imageprocessor.exception.ImageProcessorException;
 import ca.mikegabelmann.imageprocessor.events.ImageProcessEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Does nothing to the image, simply waits for a given amount of time.
  */
-public class ImageNullTask extends ImageAbstractTask {
+public class ImageNullTask extends AbstractImageTask {
     private static final Logger LOGGER = LoggerFactory.getLogger(ImageNullTask.class);
 
     //CONSTANTS

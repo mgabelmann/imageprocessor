@@ -8,10 +8,10 @@ import ca.mikegabelmann.imageprocessor.events.ImageMessageEvent;
 import ca.mikegabelmann.imageprocessor.events.ImageMessageEventType;
 import ca.mikegabelmann.imageprocessor.events.ImageProcessEvent;
 import ca.mikegabelmann.imageprocessor.events.ImageProcessEventType;
-import ca.mikegabelmann.imageprocessor.events.ImageProcessorException;
-import ca.mikegabelmann.imageprocessor.events.ImageTaskException;
-import ca.mikegabelmann.imageprocessor.listeners.ProcessImageListener;
-import ca.mikegabelmann.imageprocessor.tasks.ImageAbstractTask;
+import ca.mikegabelmann.imageprocessor.exception.ImageProcessorException;
+import ca.mikegabelmann.imageprocessor.exception.ImageTaskException;
+import ca.mikegabelmann.imageprocessor.listeners.ImageMessageEventListener;
+import ca.mikegabelmann.imageprocessor.tasks.AbstractImageTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +52,7 @@ public final class ImageProcessor implements Runnable {
     private final Queue queue;
     
     /** List of listeners that are waiting for events from us. */
-    private final List<ProcessImageListener> listeners;
+    private final List<ImageMessageEventListener> listeners;
 
 
     /**
@@ -172,7 +172,7 @@ public final class ImageProcessor implements Runnable {
      * any event that we process.
      * @param pil who to send events to
      */
-    public synchronized boolean addEventListener(final ProcessImageListener pil) {
+    public synchronized boolean addEventListener(final ImageMessageEventListener pil) {
         if (pil == null) {
             return false;
 
@@ -180,11 +180,8 @@ public final class ImageProcessor implements Runnable {
             return false;
 
         } else {
-            boolean added = listeners.add(pil);
-
-            LOGGER.debug("{}: registered a listener {}", this, added);
-
-            return added;
+            LOGGER.debug("{}: registered a listener", this);
+            return listeners.add(pil);
         }
     }
 
@@ -192,16 +189,13 @@ public final class ImageProcessor implements Runnable {
      * Remove an event listener. deregister the given listener from the list of listeners.
      * @param pil object that does not want to receive ProcessMessageEvents
      */
-    public synchronized boolean removeEventListener(final ProcessImageListener pil) {
+    public synchronized boolean removeEventListener(final ImageMessageEventListener pil) {
         if (pil == null) {
             return false;
 
         }  else {
-            boolean removed = listeners.remove(pil);
-
-            LOGGER.debug("{}: unregistered a listener {}", this, removed);
-
-            return removed;
+            LOGGER.debug("{}: unregistered a listener", this);
+            return listeners.remove(pil);
         }
     }
 
@@ -210,8 +204,13 @@ public final class ImageProcessor implements Runnable {
      * @param pil listener to test
      * @return true if a registered listener, false otherwise
      */
-    public synchronized boolean isEventListener(final ProcessImageListener pil) {
+    public synchronized boolean isEventListener(final ImageMessageEventListener pil) {
         return listeners.contains(pil);
+    }
+
+    @Override
+    public String toString() {
+        return "ImageProcessor" + id;
     }
 
     /**
@@ -229,36 +228,36 @@ public final class ImageProcessor implements Runnable {
             return;
         }
         
-        //we dont bother checking type as ImageProcessEvent can only EVER contain given type
-        ProcessImageListener pil = (ProcessImageListener) ipe.getSource();
+        //we don't bother checking type as ImageProcessEvent can only EVER contain given type
+        ImageMessageEventListener pil = (ImageMessageEventListener) ipe.getSource();
         
         //process all the tasks stored in this event (FIFO)
         //if an error occurs we send an error message, stop processing this event and wait for another
-        while (ipe.getTasklistSize() > 0) {
+        while (ipe.getSize() > 0) {
             try {
-                ImageAbstractTask task = ipe.removeNextProcessingTask();
+                AbstractImageTask task = ipe.processNextTask();
                 this.processTask(ipe, task);
                                
             } catch (ClassCastException cce) {
                 //not a subclass of ImageAbstractTask
-                this.sendMessageEvent(ImageMessageEventType.ERROR, pil, ipe.getImage(), ipe.getData(), cce.getMessage());
+                this.sendMessageEvent(ImageMessageEventType.ERROR, pil, ipe.getImage(), cce.getMessage());
                 return;
                 
             } catch (ImageTaskException ite) {
                 //an error occurred with the task given. Unavailable resources, etc.
-                this.sendMessageEvent(ImageMessageEventType.ERROR, pil, ipe.getImage(), ipe.getData(), ite.getMessage());
+                this.sendMessageEvent(ImageMessageEventType.ERROR, pil, ipe.getImage(), ite.getMessage());
                 return;
                 
             } catch (ImageProcessorException ie) {
                 //an error occurred processing the task which the ImageProcessor cannot recover from and
                 //must stop processing this event.
-                this.sendMessageEvent(ImageMessageEventType.ERROR, pil, ipe.getImage(), ipe.getData(), ie.getMessage());
+                this.sendMessageEvent(ImageMessageEventType.ERROR, pil, ipe.getImage(), ie.getMessage());
                 return;
             }
         }
         
         //reply with an OK message
-        this.sendMessageEvent(ImageMessageEventType.OK, pil, ipe.getImage(), ipe.getData(), null);
+        this.sendMessageEvent(ImageMessageEventType.OK, pil, ipe.getImage(), null);
     }
 
     /**
@@ -268,11 +267,17 @@ public final class ImageProcessor implements Runnable {
      * @param ipe event this task belongs to
      * @param task task to currently process
      * @throws ImageTaskException if the task is somehow invalid (depends on type), and 
-     * @throws ImageProcessorException if there problem performing the task.
+     * @throws ImageProcessorException if there is problem performing the task.
      */
-    private void processTask(final ImageProcessEvent ipe, final ImageAbstractTask task) throws ImageTaskException, ImageProcessorException {
+    private void processTask(
+            final ImageProcessEvent ipe,
+            final AbstractImageTask task)
+            throws ImageTaskException, ImageProcessorException {
+
         //ignore empty tasks
-        if (task == null) return;
+        if (task == null) {
+            return;
+        }
         
         //process the received task
         task.processTask(ipe);
@@ -281,46 +286,29 @@ public final class ImageProcessor implements Runnable {
     /**
      * Send a message to the listener specified in the event and also to anyone
      * registered as a listener.
-     *
      * @param type
      * @param source send result to this listener
      * @param image final image
-     * @param data user defined data
      * @param errormessage only if there was an error otherwise null
      */
-    private void sendMessageEvent(ImageMessageEventType type,
-                                  ProcessImageListener source,
-                                  BufferedImage image,
-                                  Object data,
-                                  String errormessage) {
+    private void sendMessageEvent(
+            final ImageMessageEventType type,
+            final ImageMessageEventListener source,
+            final BufferedImage image,
+            final String errormessage) {
                                       
-        ImageMessageEvent ime = new ImageMessageEvent(type, data, errormessage, image);
-        
-        //have we sent a reply to anyone
-        boolean sent = false;
+        ImageMessageEvent ime = new ImageMessageEvent(source, type, errormessage, image);
         
         //send an event back to a registered listener, if any
-        if (source != null) {
-            source.eventPerformed(ime);
-            sent = true;
-        }
+        source.eventPerformed(ime);
         
         //loop over all the registered listeners, and send event to them
-        for (ProcessImageListener listener : listeners) {
-            if (listener == null) continue;
-            listener.eventPerformed(ime);
-            sent = true;
+        for (ImageMessageEventListener listener : listeners) {
+            if (listener != source) {
+                //don't send duplicate event
+                listener.eventPerformed(ime);
+            }
         }
-        
-        //if we didn't send a message to anyone print a response
-        if (! sent) {
-            LOGGER.error("{}: no one to send reply to (type: {}, data: {})", this, type, data);
-        }
-    }   
-    
-    @Override
-    public String toString() {
-          return "ImageProcessor" + id;
     }
     
 }

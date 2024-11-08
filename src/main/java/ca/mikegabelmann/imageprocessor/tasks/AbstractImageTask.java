@@ -1,8 +1,8 @@
 package ca.mikegabelmann.imageprocessor.tasks;
 
 import ca.mikegabelmann.imageprocessor.events.ImageProcessEvent;
-import ca.mikegabelmann.imageprocessor.events.ImageTaskException;
-import ca.mikegabelmann.imageprocessor.events.ImageProcessorException;
+import ca.mikegabelmann.imageprocessor.exception.ImageTaskException;
+import ca.mikegabelmann.imageprocessor.exception.ImageProcessorException;
 
 
 /**
@@ -13,7 +13,7 @@ import ca.mikegabelmann.imageprocessor.events.ImageProcessorException;
  * <P>Any class that implements this class should throw an ImageTaskException from
  * the constructor. This is a way to verify that the Task being created is valid.</P>
  */
-public abstract class ImageAbstractTask {
+public abstract class AbstractImageTask {
     /** Type of task to perform. */
     protected final String taskName;
 
@@ -21,7 +21,7 @@ public abstract class ImageAbstractTask {
      * Creates a new instance of ImageTask.
      * @param taskName task type
      */
-    protected ImageAbstractTask(final String taskName) {
+    protected AbstractImageTask(final String taskName) {
         this.taskName = taskName;
     }
 

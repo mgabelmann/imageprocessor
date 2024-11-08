@@ -1,9 +1,11 @@
 package ca.mikegabelmann.imageprocessor;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import ca.mikegabelmann.imageprocessor.events.ImageProcessEvent;
-import ca.mikegabelmann.imageprocessor.listeners.ProcessImageListener;
+import ca.mikegabelmann.imageprocessor.listeners.ImageMessageEventListener;
+import ca.mikegabelmann.imageprocessor.listeners.ImageProcessEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +24,7 @@ import org.slf4j.LoggerFactory;
  *
  * <P>Internally this class uses an ArrayList to store all its data.</P>
  */
-public final class Queue {
+public final class Queue implements ImageProcessEventListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(Queue.class);
 
     //CONSTANTS
@@ -30,9 +32,6 @@ public final class Queue {
     private final static int INITIAL_CAPACITY   = 100;
     
     //VARIABLES
-    /** Number of items processed so far. */
-    private long counter = 0;
-    
     /** List of items to process. */
     private final ArrayList<ImageProcessEvent> queue;
 
@@ -44,31 +43,32 @@ public final class Queue {
 
     /**
      * Put an event into the queue. Prioritizes items as specified by the ImageProcessEvent.
-     * @param ipe the event to add to the queue
+     * @param event the event to add to the queue
      */
-    public synchronized void putItem(final ImageProcessEvent ipe) {
+    @Override
+    public synchronized void eventPerformed(final ImageProcessEvent event) {
         //add the element to the queue
-        switch (ipe.getPriority()) {
+        switch (event.getPriority()) {
             //place at front of queue
             case PRIORITY_HIGH:
-                queue.add(0, ipe);
+                queue.add(0, event);
                 break;
             
             //place in middle of queue elements if any
             case PRIORITY_MEDIUM:
                 int pos = queue.size() / 2;
-                queue.add(pos, ipe);              
+                queue.add(pos, event);
                 break;
-                
-            //place at end of queue
+
             case PROCESS_EXIT:
+                //do nothing with item
+                break;
+
+            //place at end of queue
             case PRIORITY_LOW:
             default:
-                queue.add(ipe);
-        }        
-        
-        //keep track of the number of items processed (just for fun)
-        counter++;        
+                queue.add(event);
+        }
         
         //alert everyone waiting for us that we have something to process
         notifyAll();
@@ -78,8 +78,7 @@ public final class Queue {
      * Get an event from the queue. The ImageProcessor will call this method to
      * look for work to be done. If it finds none it waits. When work arrives it 
      * will be notified. Once it has found work it will keep processing until there
-     * is none again. 
-     *
+     * is none again.
      * @return item to process or null
      */
     public synchronized ImageProcessEvent getWork() {
@@ -93,7 +92,7 @@ public final class Queue {
             }
             
         } else {
-            return (ImageProcessEvent) queue.remove(0);
+            return queue.remove(0);
         }
         
         //just in case something weird happens
@@ -106,10 +105,8 @@ public final class Queue {
      * use the flush method instead.</B>
      */
     public synchronized void flushAll() {
-        int size = queue.size();
+        LOGGER.info("flushed queue of {} items", queue.size());
         queue.clear();
-
-        LOGGER.info("flushed queue of {} items", size);
     }
 
     /**
@@ -119,26 +116,24 @@ public final class Queue {
      *
      * @param pil listener to search for
      */
-    public synchronized void flush(final ProcessImageListener pil) {
-        if (pil == null) { return; }
+    public synchronized void flush(final ImageMessageEventListener pil) {
+        if (pil == null) {
+            return;
+        }
                
         //make an array of all the items
-        Object[] tmp = queue.toArray();
+        List<ImageProcessEvent> copy = queue.stream().toList();
         
         //remove all the elements in the queue
         queue.clear();
-        
-        //add the items that were NOT sent by the ProcessImageListener given
-        for (Object o : tmp) {
-            ImageProcessEvent ipe = (ImageProcessEvent) o;
-            Object source = ipe.getSource();
 
-            if (source != null && !source.equals(pil)) {
+        for (ImageProcessEvent ipe : copy) {
+            if (ipe.getSource() != pil) {
                 queue.add(ipe);
             }
-        }       
+        }
 
-        LOGGER.info("flushed queue of {} items", tmp.length);
+        LOGGER.debug("flushed queue, now contains {} items", queue.size());
     }
 
     /**
@@ -156,19 +151,11 @@ public final class Queue {
     public synchronized int numElements() {
         return queue.size();
     }
-
-    /**
-     * Returns the number of items added to the queue since it was first created.
-     * @return number of items added
-     */
-    public synchronized long getCounter() {
-        return counter;
-    }
     
     @Override
     public synchronized String toString() {
-        return "Queue has received: " + counter + " items and currently has " + queue.size() + " items waiting to be processed";
+        return "Queue has " + queue.size() + " items waiting to be processed";
     }
-    
+
 }
 

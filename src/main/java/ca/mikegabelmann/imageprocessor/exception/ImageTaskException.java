@@ -1,13 +1,13 @@
-package ca.mikegabelmann.imageprocessor.events;
+package ca.mikegabelmann.imageprocessor.exception;
 
 
-import ca.mikegabelmann.imageprocessor.tasks.ImageAbstractTask;
+import ca.mikegabelmann.imageprocessor.tasks.AbstractImageTask;
 
 /**
  * Thrown if there is a problem with the structure of a task. Tasks must be
  * formatted and are validated when created. If there is a problem with the structure
  * of a task then this exception is generated.
- * @see ImageAbstractTask
+ * @see AbstractImageTask
  */
 public final class ImageTaskException extends Exception {
 
@@ -17,8 +17,7 @@ public final class ImageTaskException extends Exception {
     }
 
     /**
-     * Constructs an instance of <code>ImageTaskException</code> with the specified
-     * detail message.
+     * Constructs an instance of <code>ImageTaskException</code> with the specified detail message.
      * @param msg the detail message.
      */
     public ImageTaskException(final String msg) {

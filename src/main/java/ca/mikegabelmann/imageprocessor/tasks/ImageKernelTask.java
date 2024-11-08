@@ -4,8 +4,8 @@ import java.awt.image.Kernel;
 import java.awt.image.BufferedImage;
 
 import ca.mikegabelmann.imageprocessor.events.ImageProcessEvent;
-import ca.mikegabelmann.imageprocessor.events.ImageTaskException;
-import ca.mikegabelmann.imageprocessor.events.ImageProcessorException;
+import ca.mikegabelmann.imageprocessor.exception.ImageTaskException;
+import ca.mikegabelmann.imageprocessor.exception.ImageProcessorException;
 
 
 /**
@@ -13,7 +13,7 @@ import ca.mikegabelmann.imageprocessor.events.ImageProcessorException;
  * blur or sharpen an image. Several kernels are provided, but you can use your
  * own as well.
  */
-public final class ImageKernelTask extends ImageAbstractTask {
+public final class ImageKernelTask extends AbstractImageTask {
     /** Average kernel. */
     public static final Kernel AVERAGE_3x3_9 = new Kernel(
             3,

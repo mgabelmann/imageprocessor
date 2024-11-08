@@ -25,11 +25,11 @@ public final class ImageFileFilter extends FileFilter {
 
     /**
      * Creates a new instance of ImageFileFilter.
-     * @param acceptedtypes the types of image files we want to be able to process
+     * @param acceptedTypes the types of image files we want to be able to process
      */
-    public ImageFileFilter(final String[] acceptedtypes) {
-        for (String acceptedtype : acceptedtypes) {
-            imagetypes.add(acceptedtype.toLowerCase());
+    public ImageFileFilter(final String[] acceptedTypes) {
+        for (String acceptedType : acceptedTypes) {
+            imagetypes.add(acceptedType.toLowerCase());
         }
     }
 

@@ -2,29 +2,44 @@ package ca.mikegabelmann.imageprocessor.event;
 
 import java.util.ArrayList;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 
 import ca.mikegabelmann.imageprocessor.events.ImageMessageEvent;
 import ca.mikegabelmann.imageprocessor.events.ImageProcessEvent;
 import ca.mikegabelmann.imageprocessor.events.ImageProcessEventType;
-import ca.mikegabelmann.imageprocessor.events.ImageTaskException;
-import ca.mikegabelmann.imageprocessor.tasks.ImageAbstractTask;
+import ca.mikegabelmann.imageprocessor.exception.ImageTaskException;
+import ca.mikegabelmann.imageprocessor.listeners.ImageProcessEventListener;
+import ca.mikegabelmann.imageprocessor.tasks.AbstractImageTask;
 import ca.mikegabelmann.imageprocessor.tasks.ImageNullTask;
-import ca.mikegabelmann.imageprocessor.listeners.ProcessImageListener;
+import ca.mikegabelmann.imageprocessor.listeners.ImageMessageEventListener;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
-public class ImageProcessEventTest implements ProcessImageListener {
+public class ImageProcessEventTest implements ImageMessageEventListener {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ImageProcessEventTest.class);
+
     //CONSTANTS
-    private static final int value = 25;
-    private static final Integer uservalue = value;
     private static final BufferedImage image = new BufferedImage(50, 50, BufferedImage.TYPE_INT_RGB);
 
     //VARIABLES
     private ImageProcessEvent event;
     private ImageNullTask it;
+
+    @BeforeEach
+    protected void setUp() {
+        try {
+            this.it = new ImageNullTask();
+            this.event = new ImageProcessEvent(ImageProcessEventType.PRIORITY_MEDIUM, this, image, it);
+
+        } catch(ImageTaskException ite) {
+            Assertions.fail("cannot instantiate ImageNullTask: " + ite.getMessage());
+        }
+    }
 
     @AfterEach
     protected void tearDown() {
@@ -32,113 +47,66 @@ public class ImageProcessEventTest implements ProcessImageListener {
         it = null;
     }
 
-    @BeforeEach
-    protected void setUp() {
-        ImageAbstractTask[] tasks = new ImageAbstractTask[1];
-        try {
-            it = new ImageNullTask();
-
-        } catch(ImageTaskException ite) {
-            Assertions.fail("cannot instantiate ImageNullTask: " + ite.getMessage());
-        }
-
-        tasks[0] = it;
-        event = new ImageProcessEvent(ImageProcessEventType.PRIORITY_MEDIUM, this, image, uservalue, tasks);
+    /*
+    public AbstractImageTask processNextTask() {
+        return !tasks.isEmpty() ? tasks.remove(0) : null;
     }
+    public int getSize() {
+        return tasks.size();
+    }*/
 
     @Test
     public void testGetPriority() {
-        Assertions.assertEquals(event.getPriority(), ImageProcessEventType.PRIORITY_MEDIUM);
-    }
-    
-    @Test
-    public void testSetTasks() {
-        ArrayList<ImageAbstractTask> tasks = new ArrayList<>(2);
-        
-        try {
-            tasks.add(new ImageNullTask());
-            tasks.add(new ImageNullTask());
-            event.setTasks(tasks);
-            
-            int items = event.getTasklistSize();
-            if (items != 2) {
-                Assertions.fail("invalid number of tasks, should be 2, but got " + items);
-            }
-            
-        } catch (ImageTaskException ite) {
-            Assertions.fail("unable to instantiate ImageNullTask");
-        }
-    }
-    
-    @Test
-    public void testRemoveNextProcessingTask() {
-        try {
-            ImageAbstractTask iat = event.removeNextProcessingTask();
-            Assertions.assertEquals(iat, it);
-            
-        } catch (ClassCastException cce) {
-            Assertions.fail("invalid task type " +cce);
-        }
-    }
-    
-    @Test
-    public void testAddNextProcessingTask() {
-        try {
-            ImageNullTask hey = new ImageNullTask();
-            if (! event.addNextProcessingTask(hey)) {
-                Assertions.fail("unable to add task");
-            }
-            
-        } catch (ImageTaskException ite) {
-            Assertions.fail("unable to instantiate ImageNullTask");
-        }
-    }
-    
-    @Test
-    public void testGetTasklistSize() {
-        int size = event.getTasklistSize();
-        
-        //test default tasklist size
-        if (size != 1) {
-            Assertions.fail("tasklist wrong size:" +size+ ", should be 1");
-        }
-    }  
-    
-    @Test
-    public void testGetData() {
-        Assertions.assertEquals(event.getData(), uservalue);
-    }
-    
-    @Test
-    public void testSetData() {
-        Object testdata = new Object();
-        
-        event.setData(testdata);
-        Assertions.assertEquals(event.getData(), testdata);
+        Assertions.assertEquals(ImageProcessEventType.PRIORITY_MEDIUM, event.getPriority());
     }
 
     @Test
-    public void testSetImage() {
-        BufferedImage testimage = new BufferedImage(400, 500, BufferedImage.TYPE_INT_RGB);
-        
-        event.setImage(testimage);
-        Assertions.assertEquals(event.getImage(), testimage);
+    public void setPriority() {
+        event.setPriority(ImageProcessEventType.PRIORITY_HIGH);
+        Assertions.assertEquals(ImageProcessEventType.PRIORITY_HIGH, event.getPriority());
     }
 
     @Test
-    public void testGetImage() {
-        Assertions.assertEquals(event.getImage(), image);
-    }
-    
-    @Test
-    public void testGetSource() {
-        Assertions.assertEquals(event.getSource(), this);
+    public void addTask() throws ImageTaskException {
+        Assertions.assertEquals(1, event.getSize());
+
+        event.addTask(new ImageNullTask());
+        Assertions.assertEquals(2, event.getSize());
     }
 
-    
+    @Test
+    public void removeTask() throws ImageTaskException {
+        event.removeTask(it);
+        Assertions.assertEquals(0, event.getSize());
+    }
+
+    @Test
+    public void addTasks() throws ImageTaskException {
+        ImageNullTask it1 = new ImageNullTask();
+        ImageNullTask it2 = new ImageNullTask();
+
+        event.addTasks(it1, it2);
+        Assertions.assertEquals(3, event.getSize());
+    }
+
+    @Test
+    public void removeTasks() throws ImageTaskException {
+        event.removeTasks();
+
+        Assertions.assertEquals(0, event.getSize());
+    }
+
+    @Test
+    public void processNextTask() throws ImageTaskException {
+        AbstractImageTask ait = event.processNextTask();
+        Assertions.assertNotNull(ait);
+        Assertions.assertEquals(0, event.getSize());
+    }
+
+
     @Override
     public void eventPerformed(ImageMessageEvent ime) {
-        System.out.println(this + " received ImageProcessor event");
+        LOGGER.debug("received ImageMessageEvent: {}", ime);
     }
     
 }

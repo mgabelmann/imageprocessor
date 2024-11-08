@@ -1,13 +1,13 @@
-package ca.mikegabelmann.imageprocessor.events;
+package ca.mikegabelmann.imageprocessor.exception;
 
 
 /**
  * Handles internal errors and errors associated with the production of data
  * in the <code>ImageProcessor</code>.
- *
  * @see ca.mikegabelmann.imageprocessor.ImageProcessor
  */
 public final class ImageProcessorException extends Exception {
+
     /**
      * Creates a new instance of <code>ImageProcessorException</code> without detail message.
      */

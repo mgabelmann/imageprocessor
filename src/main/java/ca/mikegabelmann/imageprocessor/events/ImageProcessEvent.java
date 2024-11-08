@@ -2,9 +2,10 @@ package ca.mikegabelmann.imageprocessor.events;
 
 import java.util.ArrayList;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 
-import ca.mikegabelmann.imageprocessor.tasks.ImageAbstractTask;
-import ca.mikegabelmann.imageprocessor.listeners.ProcessImageListener;
+import ca.mikegabelmann.imageprocessor.tasks.AbstractImageTask;
+import ca.mikegabelmann.imageprocessor.listeners.ImageMessageEventListener;
 
 
 /**
@@ -16,40 +17,45 @@ import ca.mikegabelmann.imageprocessor.listeners.ProcessImageListener;
  * back to the sender if it is registered as a listener. Further tasks for the
  * message are ignored (fast fail).</P>
  */
-public final class ImageProcessEvent extends ImageAbstractMessage {
-    /** the priority to process this message as, PROCESS_EXIT is a special case */
+public final class ImageProcessEvent extends AbstractImageEvent {
+    /** The priority to process this message as, PROCESS_EXIT is a special case. */
     private ImageProcessEventType priority;
     
-    /** list of tasks to perform (FIFO) */
-    private final ArrayList<ImageAbstractTask> tasks;
+    /** List of tasks to perform (FIFO). */
+    private final ArrayList<AbstractImageTask> tasks;
+
+    /**
+     * Creates a new instance of ImageProcessEvent.
+     * @param priority priority to process this message at
+     * @param source send response to this object
+     * @param image the image to work with if not null
+     */
+    public ImageProcessEvent(
+            final ImageProcessEventType priority,
+            final ImageMessageEventListener source,
+            final BufferedImage image) {
+
+        this(priority, source, image, (AbstractImageTask) null);
+    }
 
     /**
      * Creates a new instance of ImageProcessEvent.
      * @param priority priority to process this message at 
      * @param source send response to this object
      * @param image the image to work with if not null
-     * @param data user definable object. Will be sent back in the response
      * @param t list of tasks to perform 
      */
-    public ImageProcessEvent(ImageProcessEventType priority,
-                             ProcessImageListener source, 
-                             BufferedImage image, 
-                             Object data, 
-                             ImageAbstractTask... t) {
+    public ImageProcessEvent(
+            final ImageProcessEventType priority,
+            final ImageMessageEventListener source,
+            final BufferedImage image,
+            final AbstractImageTask... t) {
                                  
-        super(source, image, data);
-        
-        this.setPriority(priority);
+        super(source, image);
+
         this.tasks = new ArrayList<>();
-        
-        if (t != null) {
-            //copy all tasks into our list of tasks to perform
-            for (ImageAbstractTask imageAbstractTask : t) {
-                if (imageAbstractTask != null) {
-                    tasks.add(imageAbstractTask);
-                }
-            }
-        }
+        this.setPriority(priority);
+        this.addTasks(t);
     }
 
     /**
@@ -57,7 +63,7 @@ public final class ImageProcessEvent extends ImageAbstractMessage {
      * @param priority
      */
     public void setPriority(final ImageProcessEventType priority) {
-        this.priority = priority == null ? ImageProcessEventType.PRIORITY_MEDIUM : priority;
+        this.priority = priority == null ? ImageProcessEventType.PRIORITY_LOW : priority;
     }
 
     /**
@@ -71,15 +77,37 @@ public final class ImageProcessEvent extends ImageAbstractMessage {
     }
 
     /**
+     * Add a task to the queue. Processed in the order received.
+     * @param task work to be done by the imageprocessor
+     */
+    public boolean addTask(final AbstractImageTask task) {
+        return task != null && tasks.add(task);
+    }
+
+    /**
+     * Remove specific task.
+     * @param task task to remove
+     */
+    public void removeTask(final AbstractImageTask task) {
+        tasks.remove(task);
+    }
+
+    /**
      * Creates a new list of tasks (removes the old one) and copies the given
      * tasks to it. If an item in the list is not a task it will be quietly dropped.
-     * @param t list of tasks
+     * @param items list of items
      */
-    public void setTasks(final ArrayList<ImageAbstractTask> t) {
-        if (t != null) {
-            this.tasks.clear();
-            this.tasks.addAll(t);
+    public void addTasks(final AbstractImageTask... items) {
+        if (items != null) {
+            tasks.addAll(Arrays.stream(items).toList());
         }
+    }
+
+    /**
+     * Remove all tasks.
+     */
+    public void removeTasks() {
+        tasks.clear();
     }
 
     /**
@@ -88,23 +116,15 @@ public final class ImageProcessEvent extends ImageAbstractMessage {
      * consumed by the ImageProcessor)
      * @return the next task to perform or null
      */
-    public ImageAbstractTask removeNextProcessingTask() {
+    public AbstractImageTask processNextTask() {
         return !tasks.isEmpty() ? tasks.remove(0) : null;
-    }
-
-    /**
-     * Add a task to the queue. Processed in the order received.
-     * @param task work to be done by the imageprocessor
-     */
-    public boolean addNextProcessingTask(final ImageAbstractTask task) {
-        return task != null && tasks.add(task);
     }
 
     /**
      * Get the size of the processlist.
      * @return number of tasks to process
      */
-    public int getTasklistSize() { 
+    public int getSize() {
         return tasks.size(); 
     }
     

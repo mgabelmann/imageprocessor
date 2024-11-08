@@ -9,9 +9,9 @@ import ca.mikegabelmann.imageprocessor.events.ImageMessageEvent;
 import ca.mikegabelmann.imageprocessor.events.ImageMessageEventType;
 import ca.mikegabelmann.imageprocessor.events.ImageProcessEvent;
 import ca.mikegabelmann.imageprocessor.events.ImageProcessEventType;
-import ca.mikegabelmann.imageprocessor.events.ImageTaskException;
+import ca.mikegabelmann.imageprocessor.exception.ImageTaskException;
 import ca.mikegabelmann.imageprocessor.tasks.ImageFileTask;
-import ca.mikegabelmann.imageprocessor.listeners.ProcessImageListener;
+import ca.mikegabelmann.imageprocessor.listeners.ImageMessageEventListener;
 import ca.mikegabelmann.imageprocessor.tasks.ImageFileTaskType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Handy class that handles the display of images.
  */
-public final class ImagePreview extends JPanel implements ProcessImageListener {
+public final class ImagePreview extends JPanel implements ImageMessageEventListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(ImagePreview.class);
 
     /** Static instance of our image processor. */
@@ -33,7 +33,7 @@ public final class ImagePreview extends JPanel implements ProcessImageListener {
     }
 
     /** Creates new form GalleryImagePreview. */
-    public ImagePreview(ImageProcessor ip) {
+    public ImagePreview(final ImageProcessor ip) {
         initComponents();
         
         if (ip == null || ! ip.isRunning()) {
@@ -164,7 +164,7 @@ public final class ImagePreview extends JPanel implements ProcessImageListener {
         this.imageName.setText(file.getName());
         
         //set the image, filename, and filesize
-        long filesize = (long) file.length() / 1024L;
+        long filesize = file.length() / 1024L;
         this.imageSize.setText("" + filesize);
     }
 
@@ -181,11 +181,11 @@ public final class ImagePreview extends JPanel implements ProcessImageListener {
         ImageProcessEvent ipe = new ImageProcessEvent(ImageProcessEventType.PRIORITY_MEDIUM, this, null, null);
         
         try {
-            ipe.addNextProcessingTask(new ImageFileTask(ImageFileTaskType.PROCESS_GET_IMAGE, file, null));
-            ip.getQueue().putItem(ipe);
+            ipe.addTasks(new ImageFileTask(ImageFileTaskType.PROCESS_GET_IMAGE, file, null));
+            ip.getQueue().eventPerformed(ipe);
             
         } catch(ImageTaskException ite) {
-            //if (ImageProcessor.DEBUG) { System.err.println("ERROR: " +ite.getMessage()); }
+            LOGGER.warn("ERROR: {}", ite.getMessage());
         }                    
     }
 

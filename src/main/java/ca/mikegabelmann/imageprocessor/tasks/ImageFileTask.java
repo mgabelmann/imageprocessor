@@ -8,8 +8,8 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
 import ca.mikegabelmann.imageprocessor.events.ImageProcessEvent;
-import ca.mikegabelmann.imageprocessor.events.ImageTaskException;
-import ca.mikegabelmann.imageprocessor.events.ImageProcessorException;
+import ca.mikegabelmann.imageprocessor.exception.ImageTaskException;
+import ca.mikegabelmann.imageprocessor.exception.ImageProcessorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
  * <P>A file processing task. Used for any file related task regarding image tasks.
  * (save, copy, delete, rename, etc.)</P>
  */
-public final class ImageFileTask extends ImageAbstractTask {
+public final class ImageFileTask extends AbstractImageTask {
     private static final Logger LOGGER = LoggerFactory.getLogger(ImageFileTask.class);
 
     //CONSTANTS
@@ -40,10 +40,9 @@ public final class ImageFileTask extends ImageAbstractTask {
     private final File outputfile;
     
 
-    /** <P>Creates a new instance of ImageFileTask</P>
-     * <P><B>NOTE:</B> that for some tasks the inputfile OR output file may
-     * not be necessary.</P>
-     *
+    /**
+     * <P>Creates a new instance of ImageFileTask</P>
+     * <P><B>NOTE:</B> that for some tasks the inputfile OR output file may not be necessary.</P>
      * @param filetype
      * @param inputfile file to operate on
      * @param outputfile results file

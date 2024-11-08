@@ -1,17 +1,21 @@
 package ca.mikegabelmann.imageprocessor;
 
 import ca.mikegabelmann.imageprocessor.events.ImageMessageEvent;
-import ca.mikegabelmann.imageprocessor.listeners.ProcessImageListener;
+import ca.mikegabelmann.imageprocessor.listeners.ImageMessageEventListener;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
  * Some simple test cases for testing the public methods of the ImageProcessor.
  */
-public class ImageProcessorTest implements ProcessImageListener {
+public class ImageProcessorTest implements ImageMessageEventListener {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ImageProcessorTest.class);
+
     /** we use this ImageProcessor for all tests */
     private ImageProcessor ip;
      
@@ -21,43 +25,15 @@ public class ImageProcessorTest implements ProcessImageListener {
         ip.exit();
         
         if (ip.isRunning()) {
-            System.err.println("ImageProcessor did not exit");
+            Assertions.fail("image processor did not exit");
         }
     }    
     
     @BeforeEach
     protected void setUp() throws Exception {
-        ip = new ImageProcessor();
-        
-        if (ip == null) {
-            System.err.println("ip == null");
-        }
+        this.ip = new ImageProcessor();
+        ip.start();
     }
-
-/*    @Test
-    public void testForceExit() {
-        if (! ip.isRunning()) {
-            Assertions.fail("ImageProcessor is not running");
-            return;
-        }
-        
-        ip.exit();
-        int count = 4;
-        
-        //wait upto 4 seconds for the ImageProcessor to exit
-        while (ip.isRunning() && count > 0) {
-            try {
-                wait(1000);
-                count--;
-            } catch (InterruptedException ie) {
-                break;
-            }
-        }
-        
-        if (ip.isRunning()) {
-            Assertions.fail("ImageProcessor did not exit. Synchronization issues?");
-        }
-    }*/
     
     @Test
     public void testGetPriority() {
@@ -125,7 +101,7 @@ public class ImageProcessorTest implements ProcessImageListener {
 
     @Override
     public void eventPerformed(ImageMessageEvent ime) {
-        System.out.println(this + " received ImageProcessor event");
+        LOGGER.debug("received event {}", ime);
     }
     
 }

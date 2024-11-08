@@ -1,5 +1,6 @@
 package ca.mikegabelmann.imageprocessor.ui;
 
+import javax.swing.Icon;
 import java.awt.Component;
 import java.awt.Graphics;
 
@@ -7,9 +8,8 @@ import java.awt.Graphics;
 /**
  * Class that implements the Icon interface. To be used when there is no Icon
  * for whatever reason, but one is required.
- *
  */
-public final class NullIcon implements javax.swing.Icon {
+public final class NullIcon implements Icon {
 
     /** Creates a new instance of NullIcon. */
     public NullIcon() {

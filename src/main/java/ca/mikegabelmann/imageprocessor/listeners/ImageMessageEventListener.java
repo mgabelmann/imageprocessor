@@ -9,14 +9,15 @@ import ca.mikegabelmann.imageprocessor.events.ImageMessageEvent;
  * ImageProcessor. You must also pass a reference along with the ImageProcessEvent
  * if you want to be alerted when the task is finished.
  *
+ * @see ca.mikegabelmann.imageprocessor.ImageProcessor
  * @see ImageMessageEvent
  */
-public interface ProcessImageListener extends EventListener {
+public interface ImageMessageEventListener extends EventListener {
 
     /**
      * Receive events from the ImageProcessor.
-     * @param ime the received event
+     * @param event the received event
      */
-    void eventPerformed(ImageMessageEvent ime);
+    void eventPerformed(ImageMessageEvent event);
     
 }
