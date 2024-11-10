@@ -24,6 +24,7 @@ public final class ImageProcessEvent extends AbstractImageEvent {
     /** List of tasks to perform (FIFO). */
     private final ArrayList<AbstractImageTask> tasks;
 
+
     /**
      * Creates a new instance of ImageProcessEvent.
      * @param priority priority to process this message at

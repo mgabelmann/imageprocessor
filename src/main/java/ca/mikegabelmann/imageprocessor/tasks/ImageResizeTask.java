@@ -67,10 +67,10 @@ public final class ImageResizeTask extends AbstractImageTask {
      * if there is a problem with the actual processing of the task.
      *
      * @param ipe event to process
-     * @throws ImageTaskException task is incorrectly formatted
      * @throws ImageProcessorException error processing the task
      */
-    public void processTask(final ImageProcessEvent ipe) throws ImageTaskException, ImageProcessorException {
+    @Override
+    public void processTask(final ImageProcessEvent ipe) throws ImageProcessorException {
         //make sure there is an image to resize
         if (ipe.getImage() == null) {
             throw new ImageProcessorException("image cannot be null");

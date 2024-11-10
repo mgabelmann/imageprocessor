@@ -86,6 +86,7 @@ public final class ImageKernelTask extends AbstractImageTask {
      * @throws ImageTaskException task is incorectly formatted
      * @throws ImageProcessorException error processing the task
      */
+    @Override
     public void processTask(final ImageProcessEvent ipe) throws ImageTaskException, ImageProcessorException {
         //we must have an image to process
         if (ipe.getImage() == null) {

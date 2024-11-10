@@ -17,7 +17,7 @@ public final class ImageProcessorException extends Exception {
 
     /**
      * Creates a new instance of <code>ImageProcessorException</code> with the specified detail message.
-     * @param msg the detail message.
+     * @param msg detail message.
      */
     public ImageProcessorException(final String msg) {
         super(msg);
@@ -25,8 +25,8 @@ public final class ImageProcessorException extends Exception {
 
     /**
      * Creates a new instance of <code>ImageProcessorException</code> with the specified detail message.
-     * @param msg
-     * @param cause
+     * @param msg detail message
+     * @param cause cause
      */
     public ImageProcessorException(final String msg, final Throwable cause) {
         super(msg, cause);

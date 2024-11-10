@@ -25,16 +25,16 @@ public class ImageNullTask extends AbstractImageTask {
 
     //VARIABLES
     /** how long to sleep for */
-    private long sleeptime;
+    private final long sleeptime;
 
 
     /** Creates a new instance of ImageNullTask */
-    public ImageNullTask() throws ImageTaskException {
+    public ImageNullTask() {
         this(DEFAULT_TIME);
     }
 
     /** Creates a new instance of ImageNullTask */
-    public ImageNullTask(final long sleeptime) throws ImageTaskException {
+    public ImageNullTask(final long sleeptime) {
         super("PROCESS_IMAGE_DO_NOTHING");
         
         //do some range checking
@@ -49,6 +49,10 @@ public class ImageNullTask extends AbstractImageTask {
         }
     }
 
+    public long getSleeptime() {
+        return sleeptime;
+    }
+
     /**
      * The ImageProcessor will call this method to perform the work necessary
      * to complete this task. An ImageTaskException will be thrown if there is a
@@ -59,14 +63,16 @@ public class ImageNullTask extends AbstractImageTask {
      * @throws ImageTaskException task is not formatted correctly
      * @throws ImageProcessorException error processing the task
      */
+    @Override
     public void processTask(final ImageProcessEvent ipe) throws ImageTaskException, ImageProcessorException {
         //does absolutely nothing to the image
         try {
-            this.wait(sleeptime);
-            LOGGER.debug("ImageNullTask: wait() expired");
+            Thread.sleep(sleeptime);
+            //wait(sleeptime);
+            LOGGER.debug("ImageNullTask: sleep expired");
             
         } catch (InterruptedException ie) {
-            LOGGER.warn("ImageNullTask: wait() interrupted, {}", ie.getMessage());
+            //LOGGER.warn("ImageNullTask: sleep interrupted, {}", ie.getMessage());
         }
     }
     

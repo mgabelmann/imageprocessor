@@ -88,7 +88,7 @@ public final class Queue implements ImageProcessEventListener {
                 wait();
                 
             } catch (InterruptedException ie) {
-                LOGGER.info("interrupted while waiting for the queue", ie);
+                //LOGGER.info("interrupted while waiting for the queue", ie);
             }
             
         } else {

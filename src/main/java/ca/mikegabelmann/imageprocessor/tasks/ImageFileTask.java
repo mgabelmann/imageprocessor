@@ -51,7 +51,8 @@ public final class ImageFileTask extends AbstractImageTask {
     public ImageFileTask(
             final ImageFileTaskType filetype,
             final File inputfile,
-            final File outputfile) throws ImageTaskException {
+            final File outputfile)
+            throws ImageTaskException {
 
         super("PROCESS_FILE");
         this.filetype = filetype;
@@ -101,6 +102,7 @@ public final class ImageFileTask extends AbstractImageTask {
      * @throws ImageTaskException task is incorrectly formatted
      * @throws ImageProcessorException error processing the task
      */
+    @Override
     public void processTask(final ImageProcessEvent ipe) throws ImageTaskException, ImageProcessorException {
         String message = switch (filetype) {
             case PROCESS_GET_IMAGE -> {
@@ -144,8 +146,8 @@ public final class ImageFileTask extends AbstractImageTask {
      * Gets the requested image file.
      * @param file file to load that contains the image requested
      * @return image once loaded we return the image
-     * @throws ImageTaskException
-     * @throws ImageProcessorException
+     * @throws ImageTaskException invalid arguments
+     * @throws ImageProcessorException processor error
      */
     private BufferedImage readImage(final File file) throws ImageTaskException, ImageProcessorException {
         //make sure we have an input file
@@ -155,7 +157,7 @@ public final class ImageFileTask extends AbstractImageTask {
         
         //try and get the file
         try {                                             
-            return ImageIO.read(file);            
+            return ImageIO.read(file);
         
         } catch (IOException ioe) {
             throw new ImageProcessorException(ioe.getMessage());           
@@ -168,18 +170,18 @@ public final class ImageFileTask extends AbstractImageTask {
      *
      * @param file name of file to write
      * @param image image to write
-     * @throws ImageTaskException
-     * @throws ImageProcessorException
+     * @throws ImageTaskException invalid argument
+     * @throws ImageProcessorException processing error
      */
     private void writeImage(final File file, final BufferedImage image) throws ImageTaskException, ImageProcessorException {
-        //make sure we have an output file
         if (file == null) {
+            //make sure we have an output file
             throw new ImageTaskException("you must provide an output file");
         }        
-        
-        //make sure that there is an image to write out
+
         if (image == null) {
-            throw new ImageProcessorException("nothing to write, image is null");
+            //make sure that there is an image to write out
+            throw new ImageTaskException("nothing to write, image is null");
         }
         
         //default mode is extension is NOT supported
@@ -245,8 +247,7 @@ public final class ImageFileTask extends AbstractImageTask {
     /**
      * Copy the given inputfile to the given outputfile. does a binary copy as
      * the data is raw data. Could be used to copy other files. Note that there are
-     * problems with doing a binary copy when changing platforms (mainly due to
-     * linefeeds).
+     * problems with doing a binary copy when changing platforms (mainly due to linefeeds).
      *
      * @param input file to load
      * @param output file to save
@@ -263,7 +264,8 @@ public final class ImageFileTask extends AbstractImageTask {
         if (input.isDirectory() || output.isDirectory()) {
             throw new ImageProcessorException("input and output files must NOT be directories");
         }
-        
+
+        //FIXME: rewrite this
         FileInputStream in = null;
         FileOutputStream out = null;
         
