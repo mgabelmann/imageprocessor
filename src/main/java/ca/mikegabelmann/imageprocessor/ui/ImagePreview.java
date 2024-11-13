@@ -38,6 +38,7 @@ public final class ImagePreview extends JPanel implements ImageMessageEventListe
         
         if (ip == null || ! ip.isRunning()) {
             this.ip = new ImageProcessor();
+
         } else {
             this.ip = ip;
         }
@@ -155,7 +156,7 @@ public final class ImagePreview extends JPanel implements ImageMessageEventListe
      * Set the filesize and name to the display.
      * @param file
      */
-    public synchronized void setImageNameAndSize(File file) {
+    public synchronized void setImageNameAndSize(final File file) {
         if (file == null) {
             LOGGER.warn("ERROR: can not set imagename & size, file is null");
             return; 
@@ -172,7 +173,7 @@ public final class ImagePreview extends JPanel implements ImageMessageEventListe
      * Send a request to the imageprocessor to get the requested file.
      * @param file
      */
-    public synchronized void setImage(File file) {
+    public synchronized void setImage(final File file) {
         if (file == null) {
             LOGGER.warn("ERROR: cannot set file, is null");
             return; 
@@ -190,7 +191,7 @@ public final class ImagePreview extends JPanel implements ImageMessageEventListe
     }
 
     @Override
-    public synchronized void eventPerformed(ImageMessageEvent ime) {
+    public synchronized void eventPerformed(final ImageMessageEvent ime) {
         if (ime.getStatus() == ImageMessageEventType.ERROR || ime.getImage() == null) { return; }
         imageIcon.setIcon(new ImageIcon(ime.getImage()));
         

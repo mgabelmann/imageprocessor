@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class ImageProcessEventTest implements ImageMessageEventListener {
+class ImageProcessEventTest implements ImageMessageEventListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(ImageProcessEventTest.class);
 
     //CONSTANTS
@@ -32,13 +32,8 @@ public class ImageProcessEventTest implements ImageMessageEventListener {
 
     @BeforeEach
     protected void setUp() {
-        try {
-            this.it = new ImageNullTask();
-            this.event = new ImageProcessEvent(ImageProcessEventType.PRIORITY_MEDIUM, this, image, it);
-
-        } catch(ImageTaskException ite) {
-            Assertions.fail("cannot instantiate ImageNullTask: " + ite.getMessage());
-        }
+        this.it = new ImageNullTask();
+        this.event = new ImageProcessEvent(ImageProcessEventType.PRIORITY_MEDIUM, this, image, it);
     }
 
     @AfterEach

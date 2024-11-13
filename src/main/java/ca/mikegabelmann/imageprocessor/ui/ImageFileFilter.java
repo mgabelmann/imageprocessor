@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 /**
  * Image file filter. Will only display files with the extensions provided.
- *
  */
 public final class ImageFileFilter extends FileFilter {   
     /** Default types of images we want to process (includes JPG & JPEG). */

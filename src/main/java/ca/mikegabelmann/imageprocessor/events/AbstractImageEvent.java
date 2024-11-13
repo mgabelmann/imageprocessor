@@ -13,7 +13,7 @@ import java.util.EventObject;
  * back to you.
  */
 public abstract class AbstractImageEvent extends EventObject {
-    /** An image (maybe null). */
+    /** An image (may be null). */
     protected BufferedImage image;
 
 

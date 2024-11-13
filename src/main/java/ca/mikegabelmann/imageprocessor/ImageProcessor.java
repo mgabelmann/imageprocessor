@@ -237,18 +237,13 @@ public final class ImageProcessor implements Runnable {
             try {
                 AbstractImageTask task = ipe.processNextTask();
                 this.processTask(ipe, task);
-                               
-            } catch (ClassCastException cce) {
-                //not a subclass of ImageAbstractTask
-                this.sendMessageEvent(ImageMessageEventType.ERROR, pil, ipe.getImage(), cce.getMessage());
-                return;
                 
-            } catch (ImageTaskException ite) {
+            } catch (final ImageTaskException ite) {
                 //an error occurred with the task given. Unavailable resources, etc.
                 this.sendMessageEvent(ImageMessageEventType.ERROR, pil, ipe.getImage(), ite.getMessage());
                 return;
                 
-            } catch (ImageProcessorException ie) {
+            } catch (final ImageProcessorException ie) {
                 //an error occurred processing the task which the ImageProcessor cannot recover from and
                 //must stop processing this event.
                 this.sendMessageEvent(ImageMessageEventType.ERROR, pil, ipe.getImage(), ie.getMessage());
@@ -286,7 +281,7 @@ public final class ImageProcessor implements Runnable {
     /**
      * Send a message to the listener specified in the event and also to anyone
      * registered as a listener.
-     * @param type
+     * @param type message type
      * @param source send result to this listener
      * @param image final image
      * @param errormessage only if there was an error otherwise null

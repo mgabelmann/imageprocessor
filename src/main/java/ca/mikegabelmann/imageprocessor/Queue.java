@@ -88,7 +88,7 @@ public final class Queue implements ImageProcessEventListener {
                 wait();
                 
             } catch (InterruptedException ie) {
-                LOGGER.info("interrupted while waiting for the queue", ie);
+                //LOGGER.info("interrupted while waiting for the queue", ie);
             }
             
         } else {
@@ -151,10 +151,12 @@ public final class Queue implements ImageProcessEventListener {
     public synchronized int numElements() {
         return queue.size();
     }
-    
+
     @Override
     public synchronized String toString() {
-        return "Queue has " + queue.size() + " items waiting to be processed";
+        return "Queue{" +
+                "queue=" + queue.size() +
+                '}';
     }
 
 }

@@ -13,7 +13,7 @@ public final class NullIcon implements Icon {
 
     /** Creates a new instance of NullIcon. */
     public NullIcon() {
-        ;
+
     }
 
     @Override
@@ -28,7 +28,7 @@ public final class NullIcon implements Icon {
 
     @Override
     public void paintIcon(Component c, Graphics g, int x, int y) {
-        ;
+
     }
     
 }

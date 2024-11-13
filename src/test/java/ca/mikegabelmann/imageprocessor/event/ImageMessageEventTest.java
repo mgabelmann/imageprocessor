@@ -11,11 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- *
- *
- */
-public class ImageMessageEventTest implements ImageMessageEventListener {
+
+class ImageMessageEventTest implements ImageMessageEventListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(ImageMessageEventTest.class);
 
     //CONSTANTS

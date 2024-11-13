@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class QueueTest implements ImageMessageEventListener {
+class QueueTest implements ImageMessageEventListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(QueueTest.class);
 
     //CONSTANTS

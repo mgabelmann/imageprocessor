@@ -13,7 +13,7 @@ import ca.mikegabelmann.imageprocessor.listeners.ImageMessageEventListener;
  * to the <code>ImageProcessor</code>. The task list is a FIFO and all tasks will be processed in
  * that order.</P>
  *
- * <P>If any task cannot be completed a ImageMessageEvent will be returned
+ * <P>If any task cannot be completed an ImageMessageEvent will be returned
  * back to the sender if it is registered as a listener. Further tasks for the
  * message are ignored (fast fail).</P>
  */
@@ -23,6 +23,7 @@ public final class ImageProcessEvent extends AbstractImageEvent {
     
     /** List of tasks to perform (FIFO). */
     private final ArrayList<AbstractImageTask> tasks;
+
 
     /**
      * Creates a new instance of ImageProcessEvent.
@@ -127,5 +128,14 @@ public final class ImageProcessEvent extends AbstractImageEvent {
     public int getSize() {
         return tasks.size(); 
     }
-    
+
+    @Override
+    public String toString() {
+        return "ImageProcessEvent{" +
+                "priority=" + priority +
+                ", source=" + source +
+                ", image=" + (image == null ? "null" : "[image]") +
+                ", tasks=" + tasks +
+                '}';
+    }
 }
