@@ -118,5 +118,13 @@ public final class ImageResizeTask extends AbstractImageTask {
         AffineTransformOp ato = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);                
         return ato.filter(image, null);
     }
-    
+
+    @Override
+    public String toString() {
+        return "ImageResizeTask{" +
+                "taskName='" + taskName + '\'' +
+                ", d=" + d +
+                '}';
+    }
+
 }

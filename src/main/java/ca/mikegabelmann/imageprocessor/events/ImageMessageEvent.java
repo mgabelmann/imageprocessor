@@ -74,6 +74,15 @@ public final class ImageMessageEvent extends AbstractImageEvent {
         this.message = message;
     }
 
+    @Override
+    public String toString() {
+        return "ImageMessageEvent{" +
+                "source=" + source +
+                ", image=" + (image == null ? "null" : "[image]") +
+                ", status=" + status +
+                ", message='" + message + '\'' +
+                '}';
+    }
 
     public static ImageMessageEvent createErrorEvent(final ImageMessageEventListener source, final String message)  {
         return new ImageMessageEvent(source, ImageMessageEventType.ERROR, message, null);

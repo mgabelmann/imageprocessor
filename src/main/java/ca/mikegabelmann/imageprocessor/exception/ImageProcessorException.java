@@ -12,7 +12,7 @@ public final class ImageProcessorException extends Exception {
      * Creates a new instance of <code>ImageProcessorException</code> without detail message.
      */
     public ImageProcessorException() {
-        ;
+
     }
 
     /**

@@ -87,7 +87,7 @@ public final class ImageKernelTask extends AbstractImageTask {
      * @throws ImageProcessorException error processing the task
      */
     @Override
-    public void processTask(final ImageProcessEvent ipe) throws ImageTaskException, ImageProcessorException {
+    public void processTask(final ImageProcessEvent ipe) throws ImageProcessorException {
         //we must have an image to process
         if (ipe.getImage() == null) {
             throw new ImageProcessorException("image cannot be null");
@@ -107,5 +107,7 @@ public final class ImageKernelTask extends AbstractImageTask {
         //TODO:
         return null;
     }
-    
+
+    //TODO: toString()
+
 }

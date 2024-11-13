@@ -322,5 +322,15 @@ public final class ImageFileTask extends AbstractImageTask {
             throw new ImageProcessorException("could not delete file " +file.getName());
         }
     }
-    
+
+    @Override
+    public String toString() {
+        return "ImageFileTask{" +
+                "taskName='" + taskName + '\'' +
+                ", filetype=" + filetype +
+                ", inputfile=" + (inputfile == null ? "null" : inputfile.getAbsolutePath()) +
+                ", outputfile=" + (outputfile == null ? "null" : outputfile.getAbsolutePath()) +
+                '}';
+    }
+
 }

@@ -68,12 +68,19 @@ public class ImageNullTask extends AbstractImageTask {
         //does absolutely nothing to the image
         try {
             Thread.sleep(sleeptime);
-            //wait(sleeptime);
             LOGGER.debug("ImageNullTask: sleep expired");
             
         } catch (InterruptedException ie) {
             //LOGGER.warn("ImageNullTask: sleep interrupted, {}", ie.getMessage());
         }
     }
-    
+
+    @Override
+    public String toString() {
+        return "ImageNullTask{" +
+                "taskName='" + taskName + '\'' +
+                ", sleeptime=" + sleeptime +
+                '}';
+    }
+
 }
