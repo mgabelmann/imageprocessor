@@ -156,18 +156,17 @@ class ImageProcessorTest implements ImageMessageEventListener {
     void test6_processEvent() throws InterruptedException {
         ImageMessageEventCounter counter = Mockito.spy(ImageMessageEventCounter.class);
 
-        ImageNullTask t1 = new ImageNullTask(250);
-        ImageNullTask t2 = new ImageNullTask(250);
-
-        ImageProcessEvent ipe = new ImageProcessEvent(ImageProcessEventType.PRIORITY_MEDIUM, counter, null, t1,t2);
+        ImageProcessEvent ipe1 = new ImageProcessEvent(ImageProcessEventType.PRIORITY_MEDIUM, counter, null, new ImageNullTask(250));
+        ImageProcessEvent ipe2 = new ImageProcessEvent(ImageProcessEventType.PRIORITY_MEDIUM, counter, null, new ImageNullTask(250));
 
         Thread t = new Thread(ip);
         t.start();
 
-        ip.getQueue().eventPerformed(ipe);
+        ip.getQueue().eventPerformed(ipe1);
+        ip.getQueue().eventPerformed(ipe2);
 
         //we need to sleep and hopefully thread completes in time
-        Thread.sleep(1000L);
+        Thread.sleep(550L);
 
         ip.stopRunning();
         t.interrupt();

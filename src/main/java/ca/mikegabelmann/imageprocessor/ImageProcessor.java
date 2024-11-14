@@ -200,30 +200,31 @@ public final class ImageProcessor implements Runnable {
     void processEvent(final ImageProcessEvent ipe) {
         //we don't bother checking type as ImageProcessEvent can only EVER contain given type
         ImageMessageEventListener pil = (ImageMessageEventListener) ipe.getSource();
-        
-        //process all the tasks stored in this event (FIFO)
-        //if an error occurs we send an error message, stop processing this event and wait for another
-        while (ipe.getSize() > 0) {
-            try {
+
+        try {
+            //process all the tasks stored in this event (FIFO)
+            //if an error occurs we send an error message, stop processing this event and wait for another
+            while (ipe.getSize() > 0) {
                 AbstractImageTask task = ipe.processNextTask();
                 this.processTask(ipe, task);
 
                 if (task instanceof ExitTask) {
                     this.running = false;
+                    break;
                 }
-
-                //reply with an OK message
-                this.sendMessageEvent(ImageMessageEventType.OK, pil, ipe.getImage(), null);
-
-            } catch (final ImageTaskException ite) {
-                //an error occurred with the task given. Unavailable resources, etc.
-                this.sendMessageEvent(ImageMessageEventType.ERROR, pil, ipe.getImage(), ite.getMessage());
-                
-            } catch (final ImageProcessorException ie) {
-                //an error occurred processing the task which the ImageProcessor cannot recover from and
-                //must stop processing this event.
-                this.sendMessageEvent(ImageMessageEventType.ERROR, pil, ipe.getImage(), ie.getMessage());
             }
+
+            //reply with an OK message
+            this.sendMessageEvent(ImageMessageEventType.OK, pil, ipe.getImage(), null);
+
+        } catch (final ImageTaskException ite) {
+            //an error occurred with the task given. Unavailable resources, etc.
+            this.sendMessageEvent(ImageMessageEventType.ERROR, pil, ipe.getImage(), ite.getMessage());
+
+        } catch (final ImageProcessorException ie) {
+            //an error occurred processing the task which the ImageProcessor cannot recover from and
+            //must stop processing this event.
+            this.sendMessageEvent(ImageMessageEventType.ERROR, pil, ipe.getImage(), ie.getMessage());
         }
     }
 
