@@ -60,10 +60,6 @@ public final class Queue implements ImageProcessEventListener {
                 queue.add(pos, event);
                 break;
 
-            case PROCESS_EXIT:
-                //do nothing with item
-                break;
-
             //place at end of queue
             case PRIORITY_LOW:
             default:
