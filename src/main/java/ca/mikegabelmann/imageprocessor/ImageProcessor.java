@@ -206,11 +206,13 @@ public final class ImageProcessor implements Runnable {
             //if an error occurs we send an error message, stop processing this event and wait for another
             while (ipe.getSize() > 0) {
                 AbstractImageTask task = ipe.processNextTask();
-                this.processTask(ipe, task);
 
                 if (task instanceof ExitTask) {
                     this.running = false;
                     break;
+
+                } else {
+                    this.processTask(ipe, task);
                 }
             }
 

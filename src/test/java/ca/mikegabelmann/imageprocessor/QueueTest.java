@@ -1,8 +1,6 @@
 package ca.mikegabelmann.imageprocessor;
 
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
 
 import ca.mikegabelmann.imageprocessor.events.ImageMessageEvent;
 import ca.mikegabelmann.imageprocessor.events.ImageProcessEvent;
@@ -30,7 +28,7 @@ class QueueTest implements ImageMessageEventListener {
 
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         this.queue = new Queue();
         this.ipe = new ImageProcessEvent(ImageProcessEventType.PRIORITY_MEDIUM, this, image);
 
@@ -38,28 +36,19 @@ class QueueTest implements ImageMessageEventListener {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         this.queue = null;
         this.ipe = null;
     }
-
-    @Test
-    public void testPutItem() {
-        BufferedImage testimage = new BufferedImage(400, 500, BufferedImage.TYPE_INT_RGB);
-        ImageProcessEvent ipe2 = new ImageProcessEvent(ImageProcessEventType.PRIORITY_MEDIUM, this, testimage);
-        queue.eventPerformed(ipe2);
-
-        Assertions.assertEquals(2, queue.numElements());
-    }
     
     @Test
-    public void testGetWork() {
+    void test1_getWork() {
         ImageProcessEvent work = queue.getWork();
         Assertions.assertNotNull(work);
     }
 
     @Test
-    public void testFlushAll() {
+    void test1_flushAll() {
         this.addEvents();
         queue.flushAll();
         
@@ -70,7 +59,7 @@ class QueueTest implements ImageMessageEventListener {
 
     @Test
     @DisplayName("flush events from a specific listener")
-    public void test1_flush() {
+    void test1_flush() {
         ImageMessageEventListener tmpListener = event -> {};
         BufferedImage testimage = new BufferedImage(400, 500, BufferedImage.TYPE_INT_RGB);
         ImageProcessEvent ipe2 = new ImageProcessEvent(ImageProcessEventType.PRIORITY_MEDIUM, tmpListener, testimage);
@@ -83,15 +72,24 @@ class QueueTest implements ImageMessageEventListener {
     }
 
     @Test
-    @DisplayName("flush nothing should not throw error")
-    public void test2_flush() {
+    @DisplayName("flushing null should not do anything")
+    void test2_flush() {
         queue.flush(null);
+        Assertions.assertEquals(1, queue.numElements());
+    }
 
+    @Test
+    void test1_eventPerformed() {
+        BufferedImage testimage = new BufferedImage(400, 500, BufferedImage.TYPE_INT_RGB);
+        ImageProcessEvent ipe2 = new ImageProcessEvent(ImageProcessEventType.PRIORITY_MEDIUM, this, testimage);
+        queue.eventPerformed(ipe2);
+
+        Assertions.assertEquals(2, queue.numElements());
     }
 
     @Test
     @DisplayName("test ordering of events when added/removed from queue")
-    public void testEventPerformed() {
+    void test2_eventPerformed() {
         BufferedImage testimage = new BufferedImage(400, 500, BufferedImage.TYPE_INT_RGB);
         ImageProcessEvent ipe2 = new ImageProcessEvent(ImageProcessEventType.PRIORITY_MEDIUM, this, testimage);
         ImageProcessEvent ipe3 = new ImageProcessEvent(ImageProcessEventType.PRIORITY_HIGH, this, testimage);
@@ -112,16 +110,22 @@ class QueueTest implements ImageMessageEventListener {
     }
 
     @Test
-    public void testHasElements() {
+    void test1_hasElements() {
         if (! queue.hasElements()) {
             Assertions.fail("there should at least 1 item");
         }
     }
     
     @Test
-    public void testNumElements() {
+    void test1_numElements() {
         Assertions.assertEquals(1, queue.numElements());
     }
+
+    @Test
+    void test1_toString() {
+        Assertions.assertNotNull(queue.toString());
+    }
+
 
     private void addEvents() {
         for (int i=0; i < 20; i++) {

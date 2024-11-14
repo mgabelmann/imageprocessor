@@ -17,4 +17,11 @@ public class ExitTask extends AbstractImageTask {
         LOGGER.info("Exit Task received");
     }
 
+    @Override
+    public String toString() {
+        return "ExitTask{" +
+                "taskName='" + taskName + '\'' +
+                '}';
+    }
+
 }
