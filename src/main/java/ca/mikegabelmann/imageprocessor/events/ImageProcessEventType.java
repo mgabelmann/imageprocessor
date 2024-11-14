@@ -5,9 +5,6 @@ package ca.mikegabelmann.imageprocessor.events;
  * @see ImageProcessEvent
  */
 public enum ImageProcessEventType {
-    /** message: exit, tells the ImageProcessor to quit regardless of its current state */
-    PROCESS_EXIT,
-
     /** priority low (gets inserted at end of queue) */
     PRIORITY_LOW,
 

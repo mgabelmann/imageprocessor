@@ -25,7 +25,8 @@ public final class ImagePreview extends JPanel implements ImageMessageEventListe
 
     /** Static instance of our image processor. */
     private ImageProcessor ip;
-    
+
+    private Thread t;
 
     /** Creates new form GalleryImagePreview */
     public ImagePreview() {
@@ -38,6 +39,8 @@ public final class ImagePreview extends JPanel implements ImageMessageEventListe
         
         if (ip == null || ! ip.isRunning()) {
             this.ip = new ImageProcessor();
+            this.t = new Thread(ip);
+            t.start();
 
         } else {
             this.ip = ip;

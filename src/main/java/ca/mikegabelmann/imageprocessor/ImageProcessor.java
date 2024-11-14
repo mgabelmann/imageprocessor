@@ -7,11 +7,11 @@ import java.util.List;
 import ca.mikegabelmann.imageprocessor.events.ImageMessageEvent;
 import ca.mikegabelmann.imageprocessor.events.ImageMessageEventType;
 import ca.mikegabelmann.imageprocessor.events.ImageProcessEvent;
-import ca.mikegabelmann.imageprocessor.events.ImageProcessEventType;
 import ca.mikegabelmann.imageprocessor.exception.ImageProcessorException;
 import ca.mikegabelmann.imageprocessor.exception.ImageTaskException;
 import ca.mikegabelmann.imageprocessor.listeners.ImageMessageEventListener;
 import ca.mikegabelmann.imageprocessor.tasks.AbstractImageTask;
+import ca.mikegabelmann.imageprocessor.tasks.ExitTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,9 +26,6 @@ public final class ImageProcessor implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(ImageProcessor.class);
 
     //CONSTANTS
-    /** Default thread priority. */
-    public static final int DEFAULT_PRIORITY = Thread.MIN_PRIORITY;
-
     /** Synchronization lock for altering the qty, id, currentId. */
     private static final Object lock = new Object();
     
@@ -44,9 +41,6 @@ public final class ImageProcessor implements Runnable {
 
     /** Our id number (see idcount above). */
     private final int id;
-
-    /** Our runnable thread. We may change the Priority. */
-    private final Thread t;
     
     /** Queue of stuff to process. */
     private final Queue queue;
@@ -62,29 +56,17 @@ public final class ImageProcessor implements Runnable {
         this.queue = new Queue();
         this.listeners = new ArrayList<>(10);
 
-        this.t = new Thread(this);
-        this.t.setPriority(DEFAULT_PRIORITY);
-
         synchronized (lock) {
-           this.id = ++currentId;
-       }
+            this.id = ++currentId;
+        }
     }
 
     /**
      * Force this object to exit. Not the best way to exit as other objects
      * may be using this object for processing tasks.
      */
-    public synchronized void exit() {
+    public synchronized void stopRunning() {
         this.running = false;
-        t.interrupt();
-    }
-
-    /**
-     * You must call this method to start processing of tasks.
-     */
-    public void start() {
-        //handle the thread initialization and startup
-        t.start();
     }
 
     /**
@@ -129,34 +111,6 @@ public final class ImageProcessor implements Runnable {
     public synchronized boolean isRunning() {
         return running;
     }
-
-    /**
-     * Reset the priority of this thread. If the priority is invalid, it defaults
-     * to Thread.MIN_PRIORITY.
-     * @param priority to set to
-     */
-    public synchronized void setPriority(final int priority) {
-        switch (priority) {
-            case Thread.MAX_PRIORITY:
-            case Thread.MIN_PRIORITY:
-            case Thread.NORM_PRIORITY:
-                t.setPriority(priority);
-                break;
-
-            default:
-                t.setPriority(DEFAULT_PRIORITY);
-        }
-
-        LOGGER.info("{}: thread priority set to {}", this, priority);
-    }
-
-    /**
-     * Get the current priority of this thread.
-     * @return thread priority
-     */
-    public synchronized int getPriority() {
-        return t.getPriority();
-    }      
 
     /**
      * Get the queue. You add images to be processed to the Queue and the ImageProcesor
@@ -204,13 +158,35 @@ public final class ImageProcessor implements Runnable {
      * @param pil listener to test
      * @return true if a registered listener, false otherwise
      */
-    public synchronized boolean isEventListener(final ImageMessageEventListener pil) {
+    public synchronized boolean hasEventListener(final ImageMessageEventListener pil) {
         return listeners.contains(pil);
     }
 
     @Override
     public String toString() {
         return "ImageProcessor" + id;
+    }
+
+    /**
+     * Convenience method to get a thread.
+     * @return thread
+     * @see ImageProcessor#getThread(int)
+     */
+    public static Thread getThread() {
+        return ImageProcessor.getThread(Thread.MIN_PRIORITY);
+    }
+
+    /**
+     * Convenience method to get this class as its own thread. You must start it by calling
+     * <code>t.start()</code>
+     * @param priority threads priority
+     * @return thread
+     */
+    public static Thread getThread(final int priority) {
+        Thread t = new Thread(new ImageProcessor());
+        t.setPriority(priority);
+
+        return t;
     }
 
     /**
@@ -221,38 +197,37 @@ public final class ImageProcessor implements Runnable {
      * 
      * @param ipe event currently being processed
      */
-    private void processEvent(final ImageProcessEvent ipe) {
-        //we were asked to exit, so do it
-        if (ipe.getPriority() == ImageProcessEventType.PROCESS_EXIT) {
-            running = false;
-            return;
-        }
-        
+    void processEvent(final ImageProcessEvent ipe) {
         //we don't bother checking type as ImageProcessEvent can only EVER contain given type
         ImageMessageEventListener pil = (ImageMessageEventListener) ipe.getSource();
-        
-        //process all the tasks stored in this event (FIFO)
-        //if an error occurs we send an error message, stop processing this event and wait for another
-        while (ipe.getSize() > 0) {
-            try {
+
+        try {
+            //process all the tasks stored in this event (FIFO)
+            //if an error occurs we send an error message, stop processing this event and wait for another
+            while (ipe.getSize() > 0) {
                 AbstractImageTask task = ipe.processNextTask();
-                this.processTask(ipe, task);
-                
-            } catch (final ImageTaskException ite) {
-                //an error occurred with the task given. Unavailable resources, etc.
-                this.sendMessageEvent(ImageMessageEventType.ERROR, pil, ipe.getImage(), ite.getMessage());
-                return;
-                
-            } catch (final ImageProcessorException ie) {
-                //an error occurred processing the task which the ImageProcessor cannot recover from and
-                //must stop processing this event.
-                this.sendMessageEvent(ImageMessageEventType.ERROR, pil, ipe.getImage(), ie.getMessage());
-                return;
+
+                if (task instanceof ExitTask) {
+                    this.running = false;
+                    break;
+
+                } else {
+                    this.processTask(ipe, task);
+                }
             }
+
+            //reply with an OK message
+            this.sendMessageEvent(ImageMessageEventType.OK, pil, ipe.getImage(), null);
+
+        } catch (final ImageTaskException ite) {
+            //an error occurred with the task given. Unavailable resources, etc.
+            this.sendMessageEvent(ImageMessageEventType.ERROR, pil, ipe.getImage(), ite.getMessage());
+
+        } catch (final ImageProcessorException ie) {
+            //an error occurred processing the task which the ImageProcessor cannot recover from and
+            //must stop processing this event.
+            this.sendMessageEvent(ImageMessageEventType.ERROR, pil, ipe.getImage(), ie.getMessage());
         }
-        
-        //reply with an OK message
-        this.sendMessageEvent(ImageMessageEventType.OK, pil, ipe.getImage(), null);
     }
 
     /**
@@ -305,5 +280,5 @@ public final class ImageProcessor implements Runnable {
             }
         }
     }
-    
+
 }

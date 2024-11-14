@@ -17,6 +17,7 @@ import javax.swing.JScrollPane;
 public final class ImageViewer extends javax.swing.JFrame {
     /** Image processor does all our work for us. */
     private ImageProcessor ip;
+    private Thread t;
     
     /** A filechooser that always remembers the last place it was. */
     private JFileChooser chooser;
@@ -33,8 +34,9 @@ public final class ImageViewer extends javax.swing.JFrame {
         initComponents();
         
         //get an imageprocessor
-        ip = new ImageProcessor();
-        ip.start();
+        this.ip = new ImageProcessor();
+        this.t = new Thread(ip);
+        t.start();
         
         //create our filechooser
         chooser = new JFileChooser(new File(System.getProperty("user.home")) );
