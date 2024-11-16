@@ -1,14 +1,11 @@
 package ca.mikegabelmann.imageprocessor.event;
 
-import java.util.ArrayList;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
 
 import ca.mikegabelmann.imageprocessor.events.ImageMessageEvent;
 import ca.mikegabelmann.imageprocessor.events.ImageProcessEvent;
 import ca.mikegabelmann.imageprocessor.events.ImageProcessEventType;
 import ca.mikegabelmann.imageprocessor.exception.ImageTaskException;
-import ca.mikegabelmann.imageprocessor.listeners.ImageProcessEventListener;
 import ca.mikegabelmann.imageprocessor.tasks.AbstractImageTask;
 import ca.mikegabelmann.imageprocessor.tasks.ImageNullTask;
 import ca.mikegabelmann.imageprocessor.listeners.ImageMessageEventListener;

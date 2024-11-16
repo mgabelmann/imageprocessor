@@ -175,16 +175,20 @@ class ImageProcessorTest implements ImageMessageEventListener {
     }
 
     @Test
-    void test1_getThread() {
-        Assertions.assertNotNull(ImageProcessor.getThread());
-        Assertions.assertNotNull(ImageProcessor.getThread(Thread.NORM_PRIORITY));
-    }
+    void test1_getRunningInstance() {
+        Thread t = ImageProcessor.getRunningInstance(ip);
+        Assertions.assertNotNull(t);
+        Assertions.assertTrue(t.isAlive());
 
+        ip.stopRunning();
+        t.interrupt();
+    }
 
     @Override
-    public void eventPerformed(ImageMessageEvent ime) {
+    public void eventPerformed(final ImageMessageEvent ime) {
         LOGGER.debug("received event {}", ime);
     }
+
 
     static class ImageMessageEventCounter implements ImageMessageEventListener {
         private int count = 0;
