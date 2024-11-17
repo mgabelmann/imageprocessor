@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 public class ExitTask extends AbstractImageTask {
     private static final Logger LOGGER = LoggerFactory.getLogger(ExitTask.class);
 
+
     public ExitTask() {
         super("ExitTask");
     }

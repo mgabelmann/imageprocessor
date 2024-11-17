@@ -165,8 +165,7 @@ public final class ImageViewer extends javax.swing.JFrame {
     public static void main(String args[]) {
         new ImageViewer().setVisible(true);
     }
-     
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu aboutMenu;
     private javax.swing.JMenuItem aboutMenuItem;

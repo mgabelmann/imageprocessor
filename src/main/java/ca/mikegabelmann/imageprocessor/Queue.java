@@ -41,10 +41,6 @@ public final class Queue implements ImageProcessEventListener {
         this.queue = new ArrayList<>(INITIAL_CAPACITY);
     }
 
-    /**
-     * Put an event into the queue. Prioritizes items as specified by the ImageProcessEvent.
-     * @param event the event to add to the queue
-     */
     @Override
     public synchronized void eventPerformed(final ImageProcessEvent event) {
         //add the element to the queue
@@ -133,7 +129,7 @@ public final class Queue implements ImageProcessEventListener {
     }
 
     /**
-     * Do we have any elements to process.
+     * Are there any elements in the queue.
      * @return whether this queue contains items to be processed
      */
     public synchronized boolean hasElements() {

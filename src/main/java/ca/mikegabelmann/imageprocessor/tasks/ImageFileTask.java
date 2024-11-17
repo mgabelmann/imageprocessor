@@ -24,8 +24,7 @@ public final class ImageFileTask extends AbstractImageTask {
     //CONSTANTS
     /** buffer for writing data */
     private static final int BUFFER_SIZE = 1024;
-   
-    
+
     //VARIABLES
     /** list of the image types that are supported */
     private static String[] formats;
@@ -43,7 +42,7 @@ public final class ImageFileTask extends AbstractImageTask {
     /**
      * <P>Creates a new instance of ImageFileTask</P>
      * <P><B>NOTE:</B> that for some tasks the inputfile OR output file may not be necessary.</P>
-     * @param filetype
+     * @param filetype file type
      * @param inputfile file to operate on
      * @param outputfile results file
      * @throws ImageTaskException task is incorrectly formatted
@@ -87,21 +86,12 @@ public final class ImageFileTask extends AbstractImageTask {
 
     /**
      * Get the type of file task.
-     * @return
+     * @return task type
      */
     public ImageFileTaskType getFiletype() {
         return filetype;
     }
 
-    /**
-     * The ImageProcessor will call this method to perform the work necessary
-     * to complete this task. An ImageTaskException will be thrown if there is a
-     * problem with the format of a task. An ImageProcessorException will be thrown
-     * if there is a problem with the actual processing of the task.
-     * @param ipe event to process
-     * @throws ImageTaskException task is incorrectly formatted
-     * @throws ImageProcessorException error processing the task
-     */
     @Override
     public void processTask(final ImageProcessEvent ipe) throws ImageTaskException, ImageProcessorException {
         String message = switch (filetype) {
@@ -136,10 +126,10 @@ public final class ImageFileTask extends AbstractImageTask {
 
     /**
      * Returns a (copy) list of the available image formats available to read/write.
-     * @return list of image formats available for reading and writing
+     * @return array of image formats available for reading and writing
      */
     public String[] getAvailableFormats() {
-        return (String[]) formats.clone();
+        return formats.clone();
     }
 
     /**
@@ -191,7 +181,7 @@ public final class ImageFileTask extends AbstractImageTask {
         String filename = file.getName();
         
         //get the extension of the output file. We need to test it to make sure we can write that type
-        String suffix = filename.substring(filename.lastIndexOf(".") + 1, filename.length()).toUpperCase();       
+        String suffix = filename.substring(filename.lastIndexOf(".") + 1).toUpperCase();
         
         //locate the suffix
         for (String format : formats) {
@@ -219,8 +209,8 @@ public final class ImageFileTask extends AbstractImageTask {
      * Rename the given file.
      * @param input original file
      * @param output new file name
-     * @throws ImageTaskException
-     * @throws ImageProcessorException
+     * @throws ImageTaskException error
+     * @throws ImageProcessorException error
      */
     private void renameImage(final File input, final File output) throws ImageTaskException, ImageProcessorException {
         //make sure we have files for both
@@ -251,8 +241,8 @@ public final class ImageFileTask extends AbstractImageTask {
      *
      * @param input file to load
      * @param output file to save
-     * @throws ImageTaskException
-     * @throws ImageProcessorException
+     * @throws ImageTaskException error
+     * @throws ImageProcessorException error
      */
     private void copyImage(final File input, final File output) throws ImageTaskException, ImageProcessorException {
         //make sure we have files for both
@@ -298,8 +288,8 @@ public final class ImageFileTask extends AbstractImageTask {
     /**
      * Delete the given file.
      * @param file file to delete
-     * @throws ImageTaskException
-     * @throws ImageProcessorException
+     * @throws ImageTaskException error
+     * @throws ImageProcessorException error
      */
     private void deleteImage(final File file) throws ImageTaskException, ImageProcessorException {
         //make sure there is a file to delete

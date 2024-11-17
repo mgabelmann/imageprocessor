@@ -61,7 +61,7 @@ public final class ImageProcessEvent extends AbstractImageEvent {
 
     /**
      * Set the priority for this event.
-     * @param priority
+     * @param priority priority
      */
     public void setPriority(final ImageProcessEventType priority) {
         this.priority = priority == null ? ImageProcessEventType.PRIORITY_LOW : priority;

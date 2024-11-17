@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A threaded class that waits for work to be added to the Queue. Once added the
- * ImageProcessor will process the event and all its tasks then send an message
+ * ImageProcessor will process the event and all its tasks then send a message
  * back to the event sender (if any) and any registered listeners.
  * Multiple ImageProcessors can be working on 1 Queue.
  */
@@ -67,12 +67,15 @@ public final class ImageProcessor implements Runnable {
      */
     public synchronized void stopRunning() {
         this.running = false;
+
+        try {
+            notifyAll();
+
+        } catch (final IllegalMonitorStateException imse) {
+            LOGGER.error("{} : not owner of monitor - {}", this, imse.getMessage());
+        }
     }
 
-    /**
-     * Starts this class running. Waits for work to be added to the Queue class,
-     * and then starts working on it.
-     */
     @Override
     public void run() {
         this.running = true;
@@ -168,23 +171,17 @@ public final class ImageProcessor implements Runnable {
     }
 
     /**
-     * Convenience method to get a thread.
+     * Get a running instance.
+     * @param imageProcessor image processor
      * @return thread
-     * @see ImageProcessor#getThread(int)
      */
-    public static Thread getThread() {
-        return ImageProcessor.getThread(Thread.MIN_PRIORITY);
-    }
+    public static Thread getRunningInstance(final ImageProcessor imageProcessor) {
+        if (imageProcessor == null) {
+            throw new IllegalArgumentException("imageProcessor cannot be null");
+        }
 
-    /**
-     * Convenience method to get this class as its own thread. You must start it by calling
-     * <code>t.start()</code>
-     * @param priority threads priority
-     * @return thread
-     */
-    public static Thread getThread(final int priority) {
-        Thread t = new Thread(new ImageProcessor());
-        t.setPriority(priority);
+        Thread t = new Thread(imageProcessor);
+        t.start();
 
         return t;
     }
@@ -194,7 +191,6 @@ public final class ImageProcessor implements Runnable {
      * will be returned if successful and the object is a registered listener. An error
      * message will be returned if anything happens which causes the event to NOT be 
      * processed.
-     * 
      * @param ipe event currently being processed
      */
     void processEvent(final ImageProcessEvent ipe) {
@@ -233,7 +229,6 @@ public final class ImageProcessor implements Runnable {
     /**
      * Process the given task. Each task knows how to deal with itself and knows
      * what data it requires to perform its job.
-     *
      * @param ipe event this task belongs to
      * @param task task to currently process
      * @throws ImageTaskException if the task is somehow invalid (depends on type), and 

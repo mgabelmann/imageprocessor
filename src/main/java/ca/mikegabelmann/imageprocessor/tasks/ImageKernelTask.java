@@ -47,6 +47,7 @@ public final class ImageKernelTask extends AbstractImageTask {
     /** Kernel to use on image. */
     private Kernel kernel;       
 
+
     /**
      * Creates a new instance of ImageKernelTask.
      * @param kernel the kernel to use on the image
@@ -77,15 +78,6 @@ public final class ImageKernelTask extends AbstractImageTask {
         this.kernel = kernel;
     }
 
-    /**
-     * The ImageProcessor will call this method to perform the work necessary
-     * to complete this task. An ImageTaskException will be thrown if there is a
-     * problem with the format of a task. An ImageProcessorException will be thrown
-     * if there is a problem with the actual processing of the task.
-     * @param ipe event to process
-     * @throws ImageTaskException task is incorectly formatted
-     * @throws ImageProcessorException error processing the task
-     */
     @Override
     public void processTask(final ImageProcessEvent ipe) throws ImageProcessorException {
         //we must have an image to process
@@ -108,6 +100,12 @@ public final class ImageKernelTask extends AbstractImageTask {
         return null;
     }
 
-    //TODO: toString()
+    @Override
+    public String toString() {
+        return "ImageKernelTask{" +
+                "taskName='" + taskName + '\'' +
+                ", kernel=" + kernel +
+                '}';
+    }
 
 }
