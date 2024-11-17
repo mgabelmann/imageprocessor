@@ -22,6 +22,7 @@ public final class ImageResizeTask extends AbstractImageTask {
     /** The new dimensions for this image. */
     private final Dimension d;
 
+
     /**
      * Creates a new instance of Class.
      * @param d size to make image
@@ -60,15 +61,6 @@ public final class ImageResizeTask extends AbstractImageTask {
      */
     public int getNewHeight() { return d.height; }
 
-    /**
-     * The ImageProcessor will call this method to perform the work necessary
-     * to complete this task. An ImageTaskException will be thrown if there is a
-     * problem with the format of a task. An ImageProcessorException will be thrown
-     * if there is a problem with the actual processing of the task.
-     *
-     * @param ipe event to process
-     * @throws ImageProcessorException error processing the task
-     */
     @Override
     public void processTask(final ImageProcessEvent ipe) throws ImageProcessorException {
         //make sure there is an image to resize

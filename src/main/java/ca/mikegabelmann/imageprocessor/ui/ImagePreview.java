@@ -24,9 +24,10 @@ public final class ImagePreview extends JPanel implements ImageMessageEventListe
     private static final Logger LOGGER = LoggerFactory.getLogger(ImagePreview.class);
 
     /** Static instance of our image processor. */
-    private ImageProcessor ip;
+    private final ImageProcessor ip;
 
-    private Thread t;
+    private final Thread t;
+
 
     /** Creates new form GalleryImagePreview */
     public ImagePreview() {
@@ -37,14 +38,15 @@ public final class ImagePreview extends JPanel implements ImageMessageEventListe
     public ImagePreview(final ImageProcessor ip) {
         initComponents();
         
-        if (ip == null || ! ip.isRunning()) {
+        if (ip == null) {
             this.ip = new ImageProcessor();
-            this.t = new Thread(ip);
-            t.start();
 
         } else {
             this.ip = ip;
         }
+
+        this.t = new Thread(ip);
+        t.start();
     }
 
     /**
@@ -157,7 +159,7 @@ public final class ImagePreview extends JPanel implements ImageMessageEventListe
 
     /**
      * Set the filesize and name to the display.
-     * @param file
+     * @param file file
      */
     public synchronized void setImageNameAndSize(final File file) {
         if (file == null) {
@@ -174,7 +176,7 @@ public final class ImagePreview extends JPanel implements ImageMessageEventListe
 
     /**
      * Send a request to the imageprocessor to get the requested file.
-     * @param file
+     * @param file file
      */
     public synchronized void setImage(final File file) {
         if (file == null) {
@@ -182,7 +184,7 @@ public final class ImagePreview extends JPanel implements ImageMessageEventListe
             return; 
         }
         
-        ImageProcessEvent ipe = new ImageProcessEvent(ImageProcessEventType.PRIORITY_MEDIUM, this, null, null);
+        ImageProcessEvent ipe = new ImageProcessEvent(ImageProcessEventType.PRIORITY_MEDIUM, this, null, (ca.mikegabelmann.imageprocessor.tasks.AbstractImageTask) null);
         
         try {
             ipe.addTasks(new ImageFileTask(ImageFileTaskType.PROCESS_GET_IMAGE, file, null));

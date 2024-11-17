@@ -53,16 +53,6 @@ public class ImageNullTask extends AbstractImageTask {
         return sleeptime;
     }
 
-    /**
-     * The ImageProcessor will call this method to perform the work necessary
-     * to complete this task. An ImageTaskException will be thrown if there is a
-     * problem with the format of a task. An ImageProcessorException will be thrown
-     * if there is a problem with the actual processing of the task.
-     *
-     * @param ipe event to process
-     * @throws ImageTaskException task is not formatted correctly
-     * @throws ImageProcessorException error processing the task
-     */
     @Override
     public void processTask(final ImageProcessEvent ipe) throws ImageTaskException, ImageProcessorException {
         //does absolutely nothing to the image

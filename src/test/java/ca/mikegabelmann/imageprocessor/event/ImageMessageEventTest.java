@@ -40,47 +40,47 @@ class ImageMessageEventTest implements ImageMessageEventListener {
     
     @Test
     public void testGetStatus() {
-        Assertions.assertEquals(okmessage.getStatus(), ImageMessageEventType.OK);
-        Assertions.assertEquals(errormessage.getStatus(), ImageMessageEventType.ERROR);
-        Assertions.assertEquals(unknownmessage.getStatus(), ImageMessageEventType.UNKNOWN);
+        Assertions.assertEquals(ImageMessageEventType.OK, okmessage.getStatus());
+        Assertions.assertEquals(ImageMessageEventType.ERROR, errormessage.getStatus());
+        Assertions.assertEquals(ImageMessageEventType.UNKNOWN, unknownmessage.getStatus());
     }
 
     @Test
     public void testSetStatus() {
         //test error flag
         unknownmessage.setStatus(ImageMessageEventType.ERROR);
-        Assertions.assertEquals(unknownmessage.getStatus(), ImageMessageEventType.ERROR);
+        Assertions.assertEquals(ImageMessageEventType.ERROR, unknownmessage.getStatus());
         
         //test ok flag
         unknownmessage.setStatus(ImageMessageEventType.OK);
-        Assertions.assertEquals(unknownmessage.getStatus(), ImageMessageEventType.OK);
+        Assertions.assertEquals(ImageMessageEventType.OK, unknownmessage.getStatus());
         
         //test unknown flag
         unknownmessage.setStatus(ImageMessageEventType.UNKNOWN);
-        Assertions.assertEquals(unknownmessage.getStatus(), ImageMessageEventType.UNKNOWN);
+        Assertions.assertEquals(ImageMessageEventType.UNKNOWN, unknownmessage.getStatus());
         
         //set an invalid flag. should set default
         unknownmessage.setStatus(null);
-        Assertions.assertEquals(unknownmessage.getStatus(), ImageMessageEventType.UNKNOWN);
+        Assertions.assertEquals(ImageMessageEventType.UNKNOWN, unknownmessage.getStatus());
     }
 
     @Test
     public void testGetErrormessage() {
-        Assertions.assertEquals(errormessage.getMessage(), ERROR_MESSAGE);
+        Assertions.assertEquals(ERROR_MESSAGE, errormessage.getMessage());
         Assertions.assertNull(okmessage.getMessage());
     }
 
     @Test
     public void testSetErrormessage() {
         unknownmessage.setMessage(ERROR_MESSAGE);
-        Assertions.assertEquals(unknownmessage.getMessage(), ERROR_MESSAGE);
+        Assertions.assertEquals(ERROR_MESSAGE, unknownmessage.getMessage());
     }
 
     @Test
     public void testGetImage() {
         Assertions.assertNull(errormessage.getImage());
-        Assertions.assertEquals(okmessage.getImage(), image);
-        Assertions.assertEquals(unknownmessage.getImage(), image);
+        Assertions.assertEquals(image, okmessage.getImage());
+        Assertions.assertEquals(image, unknownmessage.getImage());
     }
 
     @Test

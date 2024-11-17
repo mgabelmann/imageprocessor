@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A threaded class that waits for work to be added to the Queue. Once added the
- * ImageProcessor will process the event and all its tasks then send an message
+ * ImageProcessor will process the event and all its tasks then send a message
  * back to the event sender (if any) and any registered listeners.
  * Multiple ImageProcessors can be working on 1 Queue.
  */
@@ -76,10 +76,6 @@ public final class ImageProcessor implements Runnable {
         }
     }
 
-    /**
-     * Starts this class running. Waits for work to be added to the Queue class,
-     * and then starts working on it.
-     */
     @Override
     public void run() {
         this.running = true;
