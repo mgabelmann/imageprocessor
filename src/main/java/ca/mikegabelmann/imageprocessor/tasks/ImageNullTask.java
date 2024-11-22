@@ -18,7 +18,7 @@ public class ImageNullTask extends AbstractImageTask {
     public static final long MAX_WAIT = 1000L * 60;
     
     /** minimum wait time */
-    public static final long MIN_WAIT = 250L;
+    public static final long MIN_WAIT = 100L;
     
     /** how long to wait */
     public static final long DEFAULT_TIME = MIN_WAIT;
